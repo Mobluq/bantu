@@ -92,6 +92,10 @@ export async function POST(req: Request) {
   } catch (error) {
     if (error instanceof Anthropic.RateLimitError) return Response.json({ error: "busy" }, { status: 429 });
     if (error instanceof Anthropic.AuthenticationError) return Response.json({ error: "no_key" }, { status: 503 });
+    // The gateway refuses until the Vercel account has billing set up: treat it like no key.
+    if (live.gateway && error instanceof Anthropic.APIError && (error.status === 401 || error.status === 403)) {
+      return Response.json({ error: "no_key", source: "gateway", detail: error.message.slice(0, 200) }, { status: 503 });
+    }
     if (error instanceof Anthropic.APIError) {
       console.error("guide chat upstream error", live.gateway ? "gateway" : "anthropic", error.status, error.message.slice(0, 300));
       return Response.json({ error: "upstream", source: live.gateway ? "gateway" : "anthropic", status: error.status ?? null, detail: error.message.slice(0, 200) }, { status: 502 });
