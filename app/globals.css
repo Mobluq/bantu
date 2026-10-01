@@ -1,0 +1,150 @@
+@import "tailwindcss";
+
+@theme {
+  --color-cream: #f1e7cf;
+  --color-paper: #fbf5e6;
+  --color-ink: #1e140c;
+  --color-brick: #b3261b;
+  --color-forest: #1e4d2f;
+  --color-ochre: #d99a2b;
+  --color-gold: #f0be3c;
+  --color-indigo: #22305c;
+  --color-night: #141b36;
+  --color-night-2: #1e2850;
+  --color-clay: #e4a47c;
+  --color-muted: #6a5747;
+
+  --font-sans: var(--font-archivo), ui-sans-serif, sans-serif;
+  --font-display: var(--font-anybody), var(--font-archivo), sans-serif;
+  --font-serif: var(--font-instrument), Georgia, serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Condensed poster display: Anybody at 55% width, heavy. */
+@utility t-display {
+  font-family: var(--font-display);
+  font-weight: 850;
+  font-stretch: 55%;
+  letter-spacing: -0.005em;
+  line-height: 0.86;
+}
+@utility t-display-wide {
+  font-family: var(--font-display);
+  font-weight: 850;
+  font-stretch: 70%;
+  line-height: 0.9;
+}
+@utility t-serif {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+}
+@utility t-mono {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Halftone dot screens */
+@utility ht {
+  background-image: radial-gradient(rgb(30 20 12 / 0.22) 1px, transparent 1.4px);
+  background-size: 5px 5px;
+}
+@utility ht-light {
+  background-image: radial-gradient(rgb(251 245 230 / 0.16) 1px, transparent 1.4px);
+  background-size: 5px 5px;
+}
+
+/* Perforated postage-stamp edge */
+@utility stamp-edge {
+  padding: 8px;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, radial-gradient(circle 5px, #0000 96%, #000) -8px -8px / 16px 16px;
+  mask: linear-gradient(#000 0 0) content-box, radial-gradient(circle 5px, #0000 96%, #000) -8px -8px / 16px 16px;
+}
+
+/* Textile bands */
+@utility band-zigzag {
+  background:
+    linear-gradient(135deg, var(--color-brick) 25%, transparent 25%) -6px 0 / 12px 12px,
+    linear-gradient(225deg, var(--color-brick) 25%, transparent 25%) -6px 0 / 12px 12px,
+    var(--color-ochre);
+}
+@utility band-kente {
+  background: repeating-linear-gradient(90deg, var(--color-brick) 0 14px, var(--color-gold) 14px 18px, var(--color-ink) 18px 22px, var(--color-gold) 22px 26px, var(--color-forest) 26px 40px, var(--color-gold) 40px 44px);
+}
+@utility band-adire {
+  background:
+    radial-gradient(circle, var(--color-paper) 0 2px, transparent 2.5px 4.5px, var(--color-paper) 5px 6px, transparent 6.5px) 0 0 / 18px 18px,
+    var(--color-indigo);
+}
+
+/* Torn paper edges */
+@utility torn-top {
+  clip-path: polygon(0 6px, 5% 0, 11% 7px, 18% 2px, 25% 8px, 33% 1px, 40% 6px, 48% 0, 55% 7px, 62% 2px, 70% 8px, 77% 1px, 84% 7px, 91% 2px, 100% 6px, 100% 100%, 0 100%);
+}
+@utility torn-bottom {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), 96% 100%, 91% calc(100% - 7px), 85% calc(100% - 2px), 78% calc(100% - 9px), 71% calc(100% - 3px), 64% calc(100% - 8px), 57% 100%, 49% calc(100% - 6px), 42% calc(100% - 1px), 35% calc(100% - 9px), 27% calc(100% - 3px), 20% calc(100% - 8px), 13% calc(100% - 2px), 6% calc(100% - 9px), 0 calc(100% - 4px));
+}
+
+@keyframes marquee {
+  to { transform: translateX(-50%); }
+}
+@keyframes pin-pulse {
+  0% { transform: scale(0.6); opacity: 0.9; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+@keyframes wave-bar {
+  0%, 100% { transform: scaleY(0.35); }
+  50% { transform: scaleY(1); }
+}
+@keyframes shimmer {
+  to { background-position: -200% 0; }
+}
+
+@utility animate-marquee {
+  animation: marquee 28s linear infinite;
+}
+@utility animate-pin {
+  animation: pin-pulse 1.8s var(--ease-out-expo) infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@utility skeleton {
+  background: linear-gradient(90deg, rgb(30 20 12 / 0.08) 0%, rgb(30 20 12 / 0.16) 40%, rgb(30 20 12 / 0.08) 80%) 0 0 / 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+
+html,
+body {
+  background: var(--color-cream);
+  color: var(--color-ink);
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-gold);
+  color: var(--color-ink);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
