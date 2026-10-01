@@ -83,7 +83,7 @@ export function Artifact({ onBack }: { onBack: () => void }) {
     <div className="relative flex h-full flex-col overflow-hidden bg-[radial-gradient(120%_70%_at_50%_42%,#4A3220_0%,#24180F_55%,var(--color-ink)_100%)] text-cream">
       <div className="flex items-center justify-between pl-1.5 pr-3.5 pt-12">
         <button type="button" onClick={onBack} aria-label="Back" className="flex size-11 items-center justify-center">
-          <ArrowLeft size={22} weight="bold" />
+          <ArrowLeft size={22} weight="light" />
         </button>
         <Mono className="text-gold">Ilé-Ifẹ̀ · Object 07 / 40</Mono>
       </div>
@@ -114,7 +114,7 @@ export function Artifact({ onBack }: { onBack: () => void }) {
           </motion.div>
         </motion.div>
         <div className="absolute right-[18px] top-4 flex flex-col items-center gap-1.5 text-gold">
-          <ArrowsClockwise size={22} weight="bold" />
+          <ArrowsClockwise size={22} weight="light" />
           <Mono className="text-[9px]">360°</Mono>
         </div>
         <div className="absolute inset-x-0 bottom-0.5 text-center">
@@ -138,9 +138,9 @@ export function Artifact({ onBack }: { onBack: () => void }) {
           whileTap={{ scale: 0.98, y: 1 }}
           transition={snappy}
           onClick={() => setToast(true)}
-          className="flex h-[54px] flex-1 items-center justify-center gap-2 rounded-xl bg-gold text-[15.5px] font-bold text-ink"
+          className="flex h-[54px] flex-1 items-center justify-center gap-2 rounded-full bg-gold text-[15.5px] font-bold text-ink"
         >
-          <Cube size={20} weight="bold" />
+          <Cube size={20} weight="light" />
           See it in your room
         </motion.button>
         <motion.button
@@ -150,7 +150,7 @@ export function Artifact({ onBack }: { onBack: () => void }) {
           onClick={() => setPlaying((p) => !p)}
           aria-pressed={playing}
           aria-label={playing ? "Pause the story" : "Listen to the story"}
-          className="flex h-[54px] min-w-[54px] items-center justify-center gap-2 rounded-xl border-[1.5px] border-cream/50 px-4 text-cream"
+          className="flex h-[54px] min-w-[54px] items-center justify-center gap-2 rounded-full border-[1.5px] border-cream/50 px-4 text-cream"
         >
           {playing ? <Pause size={16} weight="fill" /> : <Play size={16} weight="fill" />}
           {playing && <Waveform bars={8} height={16} playing />}

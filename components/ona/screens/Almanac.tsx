@@ -43,7 +43,7 @@ export function Almanac({ onGo }: { onGo: (s: Screen) => void }) {
           </motion.div>
           <div className="relative flex items-center justify-between pl-1.5 pr-3.5 pt-12">
             <button type="button" onClick={() => onGo("stamps")} aria-label="Back" className="flex size-11 items-center justify-center">
-              <ArrowLeft size={22} weight="bold" />
+              <ArrowLeft size={22} weight="light" />
             </button>
             <Mono>The Almanac</Mono>
           </div>

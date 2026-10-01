@@ -93,7 +93,7 @@ export function Stamps({ stamps, justStamped, onClearFlash, onGo }: { stamps: st
             return (
               <div key={s.id} className="absolute" style={{ ...style, rotate: `${pos.rotate}deg` }}>
                 <div className="flex h-[226px] w-[158px] flex-col items-center justify-center gap-2 rounded-md border-[1.5px] border-dashed border-cream/50 p-3 text-center">
-                  <LockSimple size={24} weight="bold" className="text-gold" />
+                  <LockSimple size={24} weight="light" className="text-gold" />
                   <span className="text-[13.5px] font-bold">{s.title}</span>
                   <span className="t-mono text-[9px] leading-[1.5] opacity-75">Finish Ọ̀ṣun’s road to earn this stamp</span>
                 </div>
@@ -135,12 +135,12 @@ export function Stamps({ stamps, justStamped, onClearFlash, onGo }: { stamps: st
       </div>
 
       <button type="button" onClick={() => onGo("map")} className="relative mx-4 flex items-center gap-3 border-t border-cream/25 px-0.5 pb-4 pt-3.5 text-left">
-        <LockSimple size={20} weight="bold" className="text-gold" />
+        <LockSimple size={20} weight="light" className="text-gold" />
         <span className="flex-1">
           <span className="block text-[14px] font-semibold">{hasGrove ? "Next: Nri, in Igbo country" : "Next: Ọ̀ṣun’s grove, Òṣogbo"}</span>
           <Mono className="text-[9.5px] opacity-70">{hasGrove ? "Ala’s road opens with the Igbo release" : "Finish today’s lesson to stamp it"}</Mono>
         </span>
-        <CaretRight size={18} weight="bold" />
+        <CaretRight size={18} weight="light" />
       </button>
 
       <div className="flex-1" />

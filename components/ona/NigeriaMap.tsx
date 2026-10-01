@@ -1,6 +1,6 @@
 "use client";
 
-import { memo } from "react";
+import { memo, useId } from "react";
 import { motion } from "framer-motion";
 import { BENUE, LABEL_XY, LAKE_CHAD, LAND, MAP_H, MAP_W, MINOR_RIVERS, NIGER, PLACE_XY, REGION_EAST, REGION_NORTH, REGION_WEST } from "@/lib/ona/geo";
 import { PLACES, type PlaceStatus } from "@/lib/ona/data";
@@ -41,7 +41,8 @@ type Props = {
 /** Illustrated Nigeria: three river-cut regions, real Natural Earth outline, tappable places. */
 export const NigeriaMap = memo(function NigeriaMap({ night, statuses, selected, onSelect }: Props) {
   const c = night ? NIGHT : DAY;
-  const k = night ? "n" : "d";
+  const uid = useId().replace(/:/g, "");
+  const k = `${uid}${night ? "n" : "d"}`;
   return (
     <svg
       viewBox={`-4 -4 ${MAP_W + 10} ${MAP_H + 12}`}

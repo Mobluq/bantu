@@ -121,7 +121,7 @@ export function Onboarding({
                         transition={snappy}
                         className="flex overflow-hidden text-gold"
                       >
-                        <Check size={16} weight="bold" />
+                        <Check size={16} weight="light" />
                       </motion.span>
                     )}
                   </AnimatePresence>
@@ -137,7 +137,7 @@ export function Onboarding({
           <PrimaryButton onClick={onNext} disabled={!ready} aria-describedby="interest-hint">
             Choose your guide
             <KeyCap>
-              <ArrowRight size={20} weight="bold" />
+              <ArrowRight size={20} weight="light" />
             </KeyCap>
           </PrimaryButton>
           <p id="interest-hint" className="min-h-[18px] text-center text-[13px]">

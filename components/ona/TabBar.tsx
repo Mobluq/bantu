@@ -34,7 +34,7 @@ export function TabBar({ active, onGo, dark = false }: { active: Screen; onGo: (
             aria-current={on ? "page" : undefined}
             className={`relative flex min-h-[52px] flex-1 flex-col items-center gap-1 pt-2.5 ${color}`}
           >
-            <Icon size={23} weight={on ? "fill" : "bold"} />
+            <Icon size={23} weight={on ? "fill" : "light"} />
             <span className={`text-[11px] ${on ? "font-bold" : "font-medium"}`}>{label}</span>
             {on && (
               <motion.span

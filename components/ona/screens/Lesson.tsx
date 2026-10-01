@@ -28,7 +28,7 @@ export function Lesson({ lives, onAnswer, onClose, onComplete }: Props) {
     <div className="relative flex h-full flex-col bg-cream text-ink">
       <div className="flex items-center gap-2.5 pl-1.5 pr-4 pt-12">
         <button type="button" onClick={onClose} aria-label="Close lesson" className="flex size-11 shrink-0 items-center justify-center">
-          <X size={20} weight="bold" />
+          <X size={20} weight="light" />
         </button>
         <div
           role="progressbar"
@@ -109,7 +109,7 @@ export function Lesson({ lives, onAnswer, onClose, onComplete }: Props) {
                   state === "right" ? "bg-forest text-gold" : state === "wrong" ? "bg-brick text-cream" : "border-[1.5px] border-ink"
                 }`}
               >
-                {state === "right" ? <Check size={18} weight="bold" /> : state === "wrong" ? <X size={16} weight="bold" /> : <span className="t-mono text-[12px]">{o.id}</span>}
+                {state === "right" ? <Check size={18} weight="light" /> : state === "wrong" ? <X size={16} weight="light" /> : <span className="t-mono text-[12px]">{o.id}</span>}
               </span>
               <span className="flex flex-col gap-[3px]">
                 <span className="text-[17.5px] font-bold">{o.yo}</span>
@@ -147,7 +147,7 @@ export function Lesson({ lives, onAnswer, onClose, onComplete }: Props) {
               <PrimaryButton tone="gold" onClick={onComplete}>
                 Continue
                 <KeyCap tone="gold">
-                  <ArrowRight size={18} weight="bold" />
+                  <ArrowRight size={18} weight="light" />
                 </KeyCap>
               </PrimaryButton>
             ) : outOfLives ? (
@@ -158,7 +158,7 @@ export function Lesson({ lives, onAnswer, onClose, onComplete }: Props) {
               <PrimaryButton tone="gold" onClick={() => setPicked(null)}>
                 Try again
                 <KeyCap tone="gold">
-                  <ArrowCounterClockwise size={18} weight="bold" />
+                  <ArrowCounterClockwise size={18} weight="light" />
                 </KeyCap>
               </PrimaryButton>
             )}

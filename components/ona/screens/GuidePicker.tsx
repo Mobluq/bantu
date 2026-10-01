@@ -23,7 +23,7 @@ export function GuidePicker({ guide, onPick, onBack, onNext }: { guide: GuideId;
     <div className="flex h-full flex-col bg-cream text-ink">
       <div className="flex items-center justify-between pl-2 pr-4 pt-12">
         <button type="button" onClick={onBack} aria-label="Back" className="flex size-11 items-center justify-center">
-          <ArrowLeft size={22} weight="bold" />
+          <ArrowLeft size={22} weight="light" />
         </button>
         <Mono>Step 2 / 3</Mono>
       </div>
@@ -125,7 +125,7 @@ export function GuidePicker({ guide, onPick, onBack, onNext }: { guide: GuideId;
         <PrimaryButton onClick={onNext}>
           Walk with {g.name}
           <KeyCap>
-            <ArrowRight size={20} weight="bold" />
+            <ArrowRight size={20} weight="light" />
           </KeyCap>
         </PrimaryButton>
       </div>

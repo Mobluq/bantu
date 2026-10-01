@@ -54,7 +54,7 @@ export function Me({ guide, cowries, streak, stamps, onGo, onReset }: { guide: G
           transition={snappy}
           className="mt-6 flex items-center gap-2 text-[13px] font-semibold underline underline-offset-[3px]"
         >
-          <ArrowCounterClockwise size={16} weight="bold" />
+          <ArrowCounterClockwise size={16} weight="light" />
           Restart the prototype
         </motion.button>
       </div>

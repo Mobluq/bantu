@@ -150,7 +150,7 @@ export function PrimaryButton({ children, tone = "ink", disabled, className = ""
       whileTap={disabled ? undefined : { scale: 0.98, y: 1 }}
       transition={snappy}
       disabled={disabled}
-      className={`flex h-[58px] w-full items-center justify-between rounded-[14px] pl-5 pr-2 text-[16.5px] font-semibold transition-opacity duration-300 disabled:cursor-not-allowed disabled:opacity-40 ${tones[tone]} ${className}`}
+      className={`group flex h-[58px] w-full items-center justify-between rounded-full pl-6 pr-[7px] text-[16.5px] font-semibold transition-[opacity,background-color] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] disabled:cursor-not-allowed disabled:opacity-40 ${tones[tone]} ${className}`}
       {...rest}
     >
       {children}
@@ -160,7 +160,13 @@ export function PrimaryButton({ children, tone = "ink", disabled, className = ""
 
 export function KeyCap({ tone = "ink", children }: { tone?: "ink" | "gold" | "night"; children: ReactNode }) {
   const key = { ink: "bg-gold text-ink", gold: "bg-ink text-gold", night: "bg-night text-gold" } as const;
-  return <span className={`flex size-[42px] items-center justify-center rounded-[10px] ${key[tone]}`}>{children}</span>;
+  return (
+    <span
+      className={`flex size-[44px] items-center justify-center rounded-full transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:-translate-y-[1px] group-hover:translate-x-1 group-hover:scale-105 ${key[tone]}`}
+    >
+      {children}
+    </span>
+  );
 }
 
 /** Guide speech bubble: paper, ink hairline, square corner at the speaker. */

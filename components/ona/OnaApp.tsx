@@ -111,7 +111,8 @@ export function OnaApp() {
           ))}
         </nav>
 
-        <div className="relative h-[100dvh] w-full overflow-hidden bg-cream lg:h-[844px] lg:w-[390px] lg:rounded-[52px] lg:border-[10px] lg:border-ink lg:shadow-[0_40px_80px_-30px_rgb(30_20_12_/_0.55)]">
+        <div className="w-full lg:w-auto lg:rounded-[64px] lg:bg-ink/[0.05] lg:p-2 lg:shadow-[0_60px_120px_-40px_rgb(30_20_12_/_0.35),0_20px_40px_-20px_rgb(30_20_12_/_0.18)] lg:ring-1 lg:ring-ink/10">
+        <div className="relative h-[100dvh] w-full overflow-hidden bg-cream lg:h-[844px] lg:w-[390px] lg:rounded-[56px] lg:border-[9px] lg:border-ink lg:shadow-[inset_0_1px_1px_rgb(255_255_255_/_0.15)]">
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.div
               key={s.screen}
@@ -124,6 +125,7 @@ export function OnaApp() {
               {view}
             </motion.div>
           </AnimatePresence>
+        </div>
         </div>
       </div>
     </MotionConfig>

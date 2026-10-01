@@ -43,7 +43,7 @@ function DayNightToggle({ night, setNight }: { night: boolean; setNight: (n: boo
           >
             {on && <motion.span layoutId="daynight" transition={snappy} className={`absolute inset-0 rounded-full ${night ? "bg-cream" : "bg-ink"}`} />}
             <span className="relative flex items-center gap-[5px]">
-              <Icon size={14} weight="bold" />
+              <Icon size={14} weight="light" />
               {label}
             </span>
           </button>
@@ -180,7 +180,7 @@ export function HomeMap({ night, setNight, statuses, selected, onSelect, cowries
                       <span className="flex items-center gap-2.5">
                         <Mono className="text-gold">+15</Mono>
                         <KeyCap>
-                          <ArrowRight size={18} weight="bold" />
+                          <ArrowRight size={18} weight="light" />
                         </KeyCap>
                       </span>
                     </PrimaryButton>
@@ -188,12 +188,12 @@ export function HomeMap({ night, setNight, statuses, selected, onSelect, cowries
                     <PrimaryButton onClick={() => onGo(place.id === "ife" ? "artifact" : "stamps")}>
                       {place.id === "ife" ? "Hold the Ifẹ̀ head" : "See your stamp"}
                       <KeyCap>
-                        <ArrowRight size={18} weight="bold" />
+                        <ArrowRight size={18} weight="light" />
                       </KeyCap>
                     </PrimaryButton>
                   ) : (
                     <div className="flex h-[58px] items-center gap-3 rounded-[14px] border-[1.5px] border-dashed border-ink/40 px-4 text-[14px] text-muted">
-                      <LockSimple size={18} weight="bold" />
+                      <LockSimple size={18} weight="light" />
                       {status === "active" ? `${guide.name}’s first lesson ships with the ${place.people} release` : "Opens after today’s road"}
                     </div>
                   )
@@ -252,7 +252,7 @@ function EmptySheet({ title, text, night = false }: { title: string; text: strin
     <div className="flex min-h-[190px] flex-col justify-center gap-3">
       <div className="flex items-center gap-3">
         <span className={`flex size-[54px] shrink-0 items-center justify-center rounded-full border-[1.5px] border-dashed ${night ? "border-cream/40 text-gold" : "border-ink/40 text-muted"}`}>
-          <LockSimple size={22} weight="bold" />
+          <LockSimple size={22} weight="light" />
         </span>
         <span className="t-display text-[30px]">{title}</span>
       </div>
