@@ -8,10 +8,10 @@ import { Emblem } from "@/components/ona/primitives";
 const FLUID = [0.32, 0.72, 0, 1] as const;
 const LINKS = [
   { href: "#prototype", label: "Prototype", n: "01" },
-  { href: "#guides", label: "The guides", n: "02" },
-  { href: "#map", label: "The map", n: "03" },
-  { href: "#lessons", label: "Lessons", n: "04" },
-  { href: "#guardrails", label: "Guardrails", n: "05" },
+  { href: "#chapters", label: "Chapters", n: "03" },
+  { href: "#guides", label: "The guides", n: "04" },
+  { href: "#map", label: "The map", n: "05" },
+  { href: "#guardrails", label: "Guardrails", n: "07" },
 ];
 
 export function IslandNav() {

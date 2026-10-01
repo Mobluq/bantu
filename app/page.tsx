@@ -5,7 +5,16 @@ import { Bezel, Eyebrow } from "@/components/site/Bezel";
 import { IslandNav } from "@/components/site/IslandNav";
 import { MapShowcase } from "@/components/site/MapShowcase";
 import { Reveal } from "@/components/site/Reveal";
+import { Loader } from "@/components/site/Loader";
+import { MapGlyph } from "@/components/site/MapGlyph";
+import { ScrollFill } from "@/components/site/ScrollFill";
+import { Chapters } from "@/components/site/Chapters";
+import { Stats } from "@/components/site/Stats";
+import { SectionIndex } from "@/components/site/SectionIndex";
+import { Cowrie } from "@/components/ona/primitives";
 import { GUIDES } from "@/lib/ona/data";
+import { ENTRIES, FESTIVALS } from "@/lib/ona/almanac";
+import { LESSONS, ROADS } from "@/lib/ona/roads";
 
 const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
 
@@ -48,43 +57,133 @@ const GUARDRAILS = [
 export default function Page() {
   return (
     <>
+      <Loader />
       <IslandNav />
+      <SectionIndex />
       <main id="top">
-        {/* 01 — Hero: editorial split */}
-        <section id="prototype" className="mx-auto grid max-w-[1400px] scroll-mt-8 lg:min-h-[100dvh] lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-12 lg:px-12 lg:pb-16 lg:pt-28">
-          <div className="order-2 flex flex-col justify-center px-4 py-24 lg:order-1 lg:px-0 lg:py-0">
-            <Reveal>
-              <Eyebrow>Interactive prototype · v0.2</Eyebrow>
-              <h1 className="mt-7">
-                <span className="t-display block text-[clamp(72px,8vw,136px)]">Walk</span>
-                <span className="t-serif -mt-1 block text-[clamp(68px,7.6vw,128px)] leading-[0.95] text-brick">Nigeria</span>
-                <span className="t-display block text-[clamp(72px,8vw,136px)]">with its gods.</span>
-              </h1>
-            </Reveal>
-            <Reveal delay={0.12}>
-              <p className="mt-8 max-w-[52ch] text-[17px] leading-relaxed text-muted">
-                ọ̀nà is a map-first almanac of Nigeria’s peoples. Lessons are short, every fact is reviewed, and the guides are the figures of
-                each tradition, speaking in their own languages. Tap through the phone: pick a guide, walk Ọ̀ṣun’s road, answer the elder, and
-                earn the Òṣogbo stamp.
-              </p>
-              <div className="mt-10 flex flex-wrap items-center gap-3">
-                <PillLink href="/app">Open the app full screen</PillLink>
+        {/* 01 — Hero: inline-image headline over a visible column grid; collage around the live phone */}
+        <section id="prototype" className="relative scroll-mt-8 overflow-hidden lg:min-h-[100dvh]">
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 mx-auto hidden max-w-[1400px] grid-cols-12 px-12 lg:grid">
+            {Array.from({ length: 12 }, (_, i) => (
+              <span key={i} className="border-l border-ink/[0.07] last:border-r" />
+            ))}
+          </div>
+          <div className="relative mx-auto grid max-w-[1400px] lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-10 lg:px-12 lg:pb-16 lg:pt-28">
+            <div className="order-2 flex flex-col justify-center px-4 py-20 lg:order-1 lg:px-0 lg:py-0">
+              <Reveal>
+                <div className="flex items-center justify-between gap-4">
+                  <Eyebrow>(01) Interactive prototype · v0.3</Eyebrow>
+                  <span className="t-mono hidden text-[10.5px] text-muted xl:inline">[ 9.08°N · 8.68°E ]</span>
+                </div>
+                <h1 className="mt-8 text-[clamp(60px,7.4vw,118px)]">
+                  <span className="flex items-center gap-[0.18em]">
+                    <span className="t-display">Walk</span>
+                    <span className="inline-flex h-[0.8em] w-[1.9em] items-center justify-center overflow-hidden rounded-full bg-paper ring-1 ring-ink/15">
+                      <MapGlyph className="h-[0.7em] w-auto" />
+                    </span>
+                  </span>
+                  <span className="t-serif -mt-[0.06em] block leading-[0.95] text-brick">Nigeria</span>
+                  <span className="flex items-center gap-[0.18em]">
+                    <span className="t-display">with its</span>
+                    <span className="inline-flex h-[0.8em] w-[1.5em] items-center justify-center overflow-hidden rounded-full bg-brick">
+                      <span className="block animate-[spin_24s_linear_infinite]">
+                        <Emblem name="esu" size={84} color="var(--color-cream)" bg="var(--color-brick)" rough={1.6} speckle={false} />
+                      </span>
+                    </span>
+                  </span>
+                  <span className="t-display block">gods.</span>
+                </h1>
+              </Reveal>
+              <Reveal delay={0.12}>
+                <p className="mt-8 max-w-[52ch] text-[17px] leading-relaxed text-muted">
+                  ọ̀nà is a map-first almanac of Nigeria’s peoples. Three roads are open: Yorùbá, Igbo and Hausa, five lessons each. Pick a guide,
+                  walk a road, ask the guide anything, and earn the stamp at the end.
+                </p>
+                <div className="mt-10 flex flex-wrap items-center gap-3">
+                  <PillLink href="/app">Open the app full screen</PillLink>
+                </div>
+                <p className="mt-4 max-w-[46ch] text-[13.5px] leading-relaxed text-muted">
+                  On iPhone, open it in Safari, tap Share, then Add to Home Screen. On Android, Chrome offers Install app.
+                </p>
+              </Reveal>
+            </div>
+            <div className="relative order-1 flex w-full items-center justify-center lg:order-2 lg:w-auto">
+              {/* collage: torn paper, tape, stickers (desktop only, never over the phone screen) */}
+              <div aria-hidden="true" className="pointer-events-none absolute inset-0 hidden lg:block">
+                <div className="torn-bottom ht-light absolute -right-16 top-14 h-[68%] w-[72%] rotate-[4deg] bg-brick" />
+                <div className="sticker absolute -left-40 top-[20%] z-10 -rotate-[8deg]">
+                  <div className="stamp-edge w-[132px] bg-paper">
+                    <div className="flex h-[160px] flex-col items-center justify-between bg-gold p-2.5 text-brick outline outline-[1.5px] -outline-offset-[5px] outline-ink">
+                      <span className="t-mono self-start text-[8px] tracking-[0.18em]">Nigeria</span>
+                      <Emblem name="osun" size={76} color="var(--color-brick)" bg="var(--color-gold)" rough={1.6} />
+                      <span className="self-start text-[10px] font-extrabold">Ọ̀ṣun-Òṣogbo Grove</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="sticker absolute -left-20 bottom-[18%] z-10 -rotate-[14deg]">
+                  <Cowrie size={72} />
+                </div>
+                <div className="sticker absolute -right-10 bottom-[6%] z-10 rotate-[12deg]">
+                  <Emblem name="ijapa" size={110} disc color="var(--color-night)" bg="var(--color-gold)" rough={1.6} />
+                </div>
               </div>
-              <p className="mt-4 max-w-[46ch] text-[13.5px] leading-relaxed text-muted">
-                On iPhone, open it in Safari, tap Share, then Add to Home Screen. On Android, Chrome offers Install app.
+              <div className="relative">
+                <OnaApp jumpNav={false} />
+                <div aria-hidden="true" className="band-kente pointer-events-none absolute -left-8 -top-1 z-10 hidden h-6 w-32 -rotate-[28deg] opacity-95 shadow-[0_4px_8px_rgb(30_20_12_/_0.25)] lg:block" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 02 — Statement: words ink in on scroll; real counts beneath */}
+        <section id="statement" className="mx-auto max-w-[1400px] scroll-mt-24 px-4 py-24 lg:px-12 lg:py-40">
+          <Reveal>
+            <Eyebrow>(02) Why</Eyebrow>
+          </Reveal>
+          <div className="mt-8 max-w-[1180px]">
+            <ScrollFill
+              text="Nigeria holds hundreds of peoples, more than five hundred languages, and gods older than its borders. ọ̀nà lets them teach you in their own voices, one road at a time."
+              accents={["gods", "voices"]}
+            />
+          </div>
+          <div className="mt-20">
+            <Stats
+              items={[
+                { n: ROADS.length, label: "roads open: Yorùbá, Igbo, Hausa", tag: "2.01" },
+                { n: LESSONS.length, label: "lessons, five per road", tag: "2.02" },
+                { n: ENTRIES.length, label: "almanac entries", tag: "2.03" },
+                { n: FESTIVALS.length, label: "festivals in the calendar", tag: "2.04" },
+                { n: 36, label: "states on the map", tag: "2.05" },
+              ]}
+            />
+          </div>
+        </section>
+
+        {/* 03 — Chapters: the roads as a horizontal journey */}
+        <section id="chapters" className="scroll-mt-0 pb-24 lg:pb-0">
+          <div className="mx-auto max-w-[1400px] px-4 pb-10 lg:px-12">
+            <Reveal className="grid gap-8 lg:grid-cols-2 lg:items-end">
+              <div>
+                <Eyebrow>(03) Chapters</Eyebrow>
+                <h2 className="mt-6">
+                  <span className="t-display block text-[clamp(56px,6vw,104px)]">Three roads,</span>
+                  <span className="t-serif block text-[clamp(54px,5.8vw,100px)] leading-[0.95] text-brick">a gift at each end.</span>
+                </h2>
+              </div>
+              <p className="max-w-[46ch] text-[17px] leading-relaxed text-muted lg:justify-self-end">
+                Each road is five short lessons: sound and greetings first, then manners, place and story. Finish all five and the road’s stamp
+                lands in your passport.
               </p>
             </Reveal>
           </div>
-          <div className="order-1 flex w-full items-center justify-center lg:order-2 lg:w-auto">
-            <OnaApp />
-          </div>
+          <Chapters />
         </section>
 
         {/* 02 — Guides: asymmetrical bento */}
         <section id="guides" className="mx-auto max-w-[1400px] scroll-mt-24 px-4 py-24 lg:px-12 lg:pb-24 lg:pt-40">
           <Reveal className="grid gap-8 lg:grid-cols-[1fr_1fr] lg:items-end">
             <div>
-              <Eyebrow>02 · The guides</Eyebrow>
+              <Eyebrow>(04) The guides</Eyebrow>
               <h2 className="mt-6">
                 <span className="t-display block text-[clamp(56px,6vw,104px)]">Each people,</span>
                 <span className="t-serif block text-[clamp(54px,5.8vw,100px)] leading-[0.95] text-brick">its own voice.</span>
@@ -146,7 +245,7 @@ export default function Page() {
         {/* 03 — Map: editorial split */}
         <section id="map" className="mx-auto grid max-w-[1400px] scroll-mt-24 gap-12 px-4 py-24 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-center lg:gap-20 lg:px-12 lg:py-40">
           <Reveal>
-            <Eyebrow>03 · The map</Eyebrow>
+            <Eyebrow>(05) The map</Eyebrow>
             <h2 className="mt-6">
               <span className="t-display block text-[clamp(56px,5.6vw,96px)]">Two rivers,</span>
               <span className="t-serif block text-[clamp(54px,5.4vw,92px)] leading-[0.95] text-brick">three countries.</span>
@@ -177,7 +276,7 @@ export default function Page() {
         {/* 04 — Lessons: z-axis cascade */}
         <section id="lessons" className="mx-auto max-w-[1400px] scroll-mt-24 px-4 py-24 lg:px-12 lg:py-40">
           <Reveal className="max-w-[760px]">
-            <Eyebrow>04 · A lesson in three beats</Eyebrow>
+            <Eyebrow>(06) A lesson in three beats</Eyebrow>
             <h2 className="mt-6">
               <span className="t-display text-[clamp(56px,6vw,104px)]">Hear, choose, </span>
               <span className="t-serif text-[clamp(54px,5.8vw,100px)] text-brick">stamp.</span>
@@ -235,7 +334,7 @@ export default function Page() {
           <div className="mx-auto max-w-[1400px] px-4 py-24 lg:px-12 lg:py-40">
             <Reveal className="grid gap-8 lg:grid-cols-2 lg:items-end">
               <div>
-                <Eyebrow tone="dark">05 · Cultural guardrails</Eyebrow>
+                <Eyebrow tone="dark">(07) Cultural guardrails</Eyebrow>
                 <h2 className="mt-6">
                   <span className="t-display block text-[clamp(56px,6vw,104px)]">Living faiths,</span>
                   <span className="t-serif block text-[clamp(54px,5.8vw,100px)] leading-[0.95] text-gold">handled with care.</span>
@@ -269,7 +368,7 @@ export default function Page() {
               </div>
             </Reveal>
             <div className="mt-16 flex flex-col justify-between gap-3 border-t border-cream/20 pt-6 sm:flex-row">
-              <span className="t-mono text-[10.5px] text-cream/70">A living almanac of Nigeria · prototype v0.2</span>
+              <span className="t-mono text-[10.5px] text-cream/70">A living almanac of Nigeria · prototype v0.3</span>
               <span className="t-mono text-[10.5px] text-cream/70">Map data: Natural Earth (public domain)</span>
             </div>
           </div>

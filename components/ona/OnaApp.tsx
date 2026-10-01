@@ -33,7 +33,7 @@ const JUMP: { id: Screen; label: string }[] = [
 
 const STORAGE_KEY = "ona.progress.v2";
 
-export function OnaApp({ bare = false }: { bare?: boolean }) {
+export function OnaApp({ bare = false, jumpNav = true }: { bare?: boolean; jumpNav?: boolean }) {
   const [s, dispatch] = useReducer(reducer, initialState);
   const hydrated = useRef(false);
 
@@ -209,7 +209,7 @@ export function OnaApp({ bare = false }: { bare?: boolean }) {
   return (
     <MotionConfig reducedMotion="user">
       <div className="flex w-full items-center gap-6 lg:w-auto">
-        <nav aria-label="Jump to screen" className="hidden flex-col items-end gap-1.5 lg:flex">
+        <nav aria-label="Jump to screen" className={jumpNav ? "hidden flex-col items-end gap-1.5 lg:flex" : "hidden"}>
           {JUMP.map((j) => (
             <button
               key={j.id}
