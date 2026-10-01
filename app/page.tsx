@@ -1,4 +1,4 @@
-import { ArrowDown, ArrowUpRight, Check } from "@phosphor-icons/react/dist/ssr";
+import { ArrowUpRight, Check } from "@phosphor-icons/react/dist/ssr";
 import { OnaApp } from "@/components/ona/OnaApp";
 import { Emblem } from "@/components/ona/primitives";
 import { Bezel, Eyebrow } from "@/components/site/Bezel";
@@ -9,21 +9,17 @@ import { GUIDES } from "@/lib/ona/data";
 
 const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
 
-function PillLink({ href, children, tone = "ink" }: { href: string; children: React.ReactNode; tone?: "ink" | "ghost" }) {
+function PillLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
     <a
       href={href}
-      className={`group inline-flex items-center gap-3 rounded-full py-1.5 pl-6 pr-1.5 text-[15px] font-semibold transition-transform duration-500 ${EASE} active:scale-[0.98] ${
-        tone === "ink" ? "bg-ink text-cream" : "bg-paper/60 text-ink ring-1 ring-ink/10"
-      }`}
+      className={`group inline-flex items-center gap-3 rounded-full bg-ink py-1.5 pl-6 pr-1.5 text-[15px] font-semibold text-cream transition-transform duration-500 ${EASE} active:scale-[0.98]`}
     >
       {children}
       <span
-        className={`flex size-9 items-center justify-center rounded-full transition-transform duration-500 ${EASE} group-hover:-translate-y-[1px] group-hover:translate-x-1 group-hover:scale-105 ${
-          tone === "ink" ? "bg-gold text-ink" : "bg-ink/[0.07]"
-        }`}
+        className={`flex size-9 items-center justify-center rounded-full bg-gold text-ink transition-transform duration-500 ${EASE} group-hover:-translate-y-[1px] group-hover:translate-x-1 group-hover:scale-105`}
       >
-        {tone === "ink" ? <ArrowUpRight size={17} weight="light" /> : <ArrowDown size={17} weight="light" />}
+        <ArrowUpRight size={17} weight="light" />
       </span>
     </a>
   );
@@ -73,9 +69,6 @@ export default function Page() {
               </p>
               <div className="mt-10 flex flex-wrap items-center gap-3">
                 <PillLink href="#guides">Meet the guides</PillLink>
-                <PillLink href="#map" tone="ghost">
-                  See the map
-                </PillLink>
               </div>
             </Reveal>
           </div>
