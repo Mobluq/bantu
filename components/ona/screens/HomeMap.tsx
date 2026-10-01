@@ -1,11 +1,11 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, Fire, LockSimple, Moon, Pause, Play, Sun } from "@phosphor-icons/react";
+import { ArrowRight, ChatCircleDots, Fire, LockSimple, Moon, Pause, Play, Sun } from "@phosphor-icons/react";
 import { useEffect } from "react";
 import { ambience, sfx, stopSpeaking } from "@/lib/ona/sound";
 import { useSoundPrefs, useSpeaker } from "../Speak";
-import { PLACES, TALES, TOTAL_PLACES, guideById, type GuideId, type PlaceStatus } from "@/lib/ona/data";
+import { GUIDES, PLACES, TALES, TOTAL_PLACES, guideById, type GuideId, type PlaceStatus } from "@/lib/ona/data";
 import { NigeriaMap } from "../NigeriaMap";
 import { ROADS, lessonsForRoad } from "@/lib/ona/roads";
 import { nextLesson } from "../state";
@@ -25,6 +25,9 @@ type Props = {
   completed: string[];
   onOpenLesson: (id: string) => void;
   onGo: (s: Screen) => void;
+  /** The traveller's chosen guide, and how to open a chat with any guide. */
+  myGuide: GuideId;
+  onAsk: (g: GuideId) => void;
 };
 
 function DayNightToggle({ night, setNight }: { night: boolean; setNight: (n: boolean) => void }) {
@@ -63,7 +66,7 @@ function DayNightToggle({ night, setNight }: { night: boolean; setNight: (n: boo
   );
 }
 
-export function HomeMap({ night, setNight, statuses, selected, onSelect, cowries, streak, stamped, completed, onOpenLesson, onGo }: Props) {
+export function HomeMap({ night, setNight, statuses, selected, onSelect, cowries, streak, stamped, completed, onOpenLesson, onGo, myGuide, onAsk }: Props) {
   const place = PLACES.find((p) => p.id === selected) ?? PLACES[0];
   const status = statuses[place.id] ?? place.status;
   const guide = guideById(place.guide);
@@ -127,6 +130,16 @@ export function HomeMap({ night, setNight, statuses, selected, onSelect, cowries
             <Cowrie size={15} fill={night ? "var(--color-gold)" : "var(--color-paper)"} />
             {cowries}
           </span>
+          <motion.button
+            type="button"
+            onClick={() => onAsk(myGuide)}
+            whileTap={{ scale: 0.92 }}
+            transition={snappy}
+            aria-label={`Ask ${guideById(myGuide).name} a question`}
+            className={`flex size-[34px] items-center justify-center rounded-full ${night ? "bg-gold text-ink" : "bg-ink text-gold"}`}
+          >
+            <ChatCircleDots size={18} weight="fill" />
+          </motion.button>
         </div>
       </header>
 
@@ -193,6 +206,7 @@ export function HomeMap({ night, setNight, statuses, selected, onSelect, cowries
                 title={place.title}
                 sub={`${place.name}, ${place.state}`}
                 text={place.blurb}
+                ask={GUIDES.some((x) => x.id === place.guide) ? { name: guide.name, go: () => onAsk(place.guide) } : undefined}
                 action={
                   road && next && status !== "done" ? (
                     <PrimaryButton onClick={() => onOpenLesson(next.id)}>
@@ -258,8 +272,10 @@ function SheetBody({
   sub,
   text,
   action,
+  ask,
   night = false,
 }: {
+  ask?: { name: string; go: () => void };
   emblem: React.ReactNode;
   kicker: React.ReactNode;
   meta: React.ReactNode;
@@ -284,6 +300,12 @@ function SheetBody({
       </div>
       <p className="mt-3 min-h-[40px] text-[14px] leading-[1.42]">{text}</p>
       <div className="mt-3.5">{action}</div>
+      {ask && (
+        <button type="button" onClick={ask.go} className="mx-auto mt-2 flex min-h-10 items-center gap-1.5 text-[13.5px] font-semibold underline underline-offset-[3px]">
+          <ChatCircleDots size={16} weight="light" />
+          Ask {ask.name} about this place
+        </button>
+      )}
     </>
   );
 }

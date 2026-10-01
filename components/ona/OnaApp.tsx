@@ -136,6 +136,8 @@ export function OnaApp({ bare = false, jumpNav = true }: { bare?: boolean; jumpN
           stamped={s.stamps.length}
           completed={s.completed}
           onOpenLesson={(id) => dispatch({ type: "openLesson", id })}
+          myGuide={s.guide}
+          onAsk={(guide) => dispatch({ type: "openChat", guide, from: "map" })}
           onGo={go}
         />
       );

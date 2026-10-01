@@ -142,9 +142,9 @@ export function Chat({ guide, onBack }: { guide: GuideId; onBack: () => void }) 
             </motion.div>
           )}
         </AnimatePresence>
-        {!busy && msgs.length > 1 && msgs.at(-1)?.suggestions && (
+        {!busy && msgs.length > 1 && msgs[msgs.length - 1].suggestions && (
           <div className="mt-1 flex flex-wrap gap-2 pl-10">
-            {msgs.at(-1)!.suggestions!.map((x) => (
+            {msgs[msgs.length - 1].suggestions!.filter((x) => !msgs.some((m) => m.role === "user" && m.content === x)).map((x) => (
               <motion.button key={x} type="button" whileTap={{ scale: 0.96 }} transition={snappy} onClick={() => send(x)} className="rounded-full bg-paper px-3 py-1.5 text-[12.5px] font-semibold ring-1 ring-ink/20">
                 {x}
               </motion.button>
@@ -185,7 +185,9 @@ export function Chat({ guide, onBack }: { guide: GuideId; onBack: () => void }) 
             onChange={(e) => setDraft(e.target.value)}
             maxLength={600}
             placeholder={`Ask ${g.name}…`}
-            className="h-10 flex-1 bg-transparent text-[15px] outline-none placeholder:text-muted"
+            enterKeyHint="send"
+            autoComplete="off"
+            className="h-10 min-w-0 flex-1 bg-transparent text-[16px] outline-none placeholder:text-muted"
           />
           <motion.button
             type="submit"
