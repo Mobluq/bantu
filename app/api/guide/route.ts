@@ -1,4 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { getVercelOidcToken } from "@vercel/oidc";
 import { GUIDES, guideById, type GuideId } from "@/lib/ona/data";
 import { guideFacts } from "@/lib/ona/guideBrief";
 
@@ -24,10 +25,31 @@ function systemPrompt(id: GuideId): string {
   ].join("\n\n");
 }
 
-export async function POST(req: Request) {
-  if (!process.env.ANTHROPIC_API_KEY) {
-    return Response.json({ error: "no_key" }, { status: 503 });
+/**
+ * Where live answers come from, in order:
+ * 1. ANTHROPIC_API_KEY, straight to the Claude API.
+ * 2. Vercel AI Gateway, authenticated with AI_GATEWAY_API_KEY or the deployment's own OIDC token (no key to manage).
+ * Neither available: 503 no_key, and the app answers from the almanac.
+ */
+async function liveClient(): Promise<{ client: Anthropic; gateway: boolean } | null> {
+  if (process.env.ANTHROPIC_API_KEY) return { client: new Anthropic(), gateway: false };
+  let token = process.env.AI_GATEWAY_API_KEY;
+  if (!token) {
+    try {
+      token = await getVercelOidcToken();
+    } catch {
+      token = undefined;
+    }
   }
+  if (!token) return null;
+  return { client: new Anthropic({ apiKey: token, baseURL: "https://ai-gateway.vercel.sh" }), gateway: true };
+}
+
+const GATEWAY_MODEL = "anthropic/claude-sonnet-5";
+
+export async function POST(req: Request) {
+  const live = await liveClient();
+  if (!live) return Response.json({ error: "no_key" }, { status: 503 });
 
   let body: { guide?: string; messages?: Turn[] };
   try {
@@ -44,17 +66,20 @@ export async function POST(req: Request) {
     turns.every((t) => (t.role === "user" || t.role === "assistant") && typeof t.content === "string" && t.content.length <= MAX_CHARS);
   if (!valid) return Response.json({ error: "bad_request" }, { status: 400 });
 
-  const client = new Anthropic();
+  const system: Anthropic.Beta.BetaTextBlockParam[] = [{ type: "text", text: systemPrompt(guide), cache_control: { type: "ephemeral" } }];
+  const messages = turns.map((t) => ({ role: t.role, content: t.content }));
   try {
-    const response = await client.beta.messages.create({
-      model: "claude-opus-5-5",
-      max_tokens: 2000,
-      betas: ["server-side-fallback-2026-07-01"],
-      fallbacks: "default",
-      output_config: { effort: "low" },
-      system: [{ type: "text", text: systemPrompt(guide), cache_control: { type: "ephemeral" } }],
-      messages: turns.map((t) => ({ role: t.role, content: t.content })),
-    });
+    const response = live.gateway
+      ? await live.client.beta.messages.create({ model: GATEWAY_MODEL, max_tokens: 1000, system, messages })
+      : await live.client.beta.messages.create({
+          model: "claude-opus-5-5",
+          max_tokens: 2000,
+          betas: ["server-side-fallback-2026-07-01"],
+          fallbacks: "default",
+          output_config: { effort: "low" },
+          system,
+          messages,
+        });
     if (response.stop_reason === "refusal") {
       return Response.json({ reply: "That is a question I will leave to the elders. Ask me about my stories, my places or my words instead." });
     }
@@ -67,7 +92,10 @@ export async function POST(req: Request) {
   } catch (error) {
     if (error instanceof Anthropic.RateLimitError) return Response.json({ error: "busy" }, { status: 429 });
     if (error instanceof Anthropic.AuthenticationError) return Response.json({ error: "no_key" }, { status: 503 });
-    if (error instanceof Anthropic.APIError) return Response.json({ error: "upstream" }, { status: 502 });
+    if (error instanceof Anthropic.APIError) {
+      console.error("guide chat upstream error", live.gateway ? "gateway" : "anthropic", error.status, error.message.slice(0, 300));
+      return Response.json({ error: "upstream" }, { status: 502 });
+    }
     return Response.json({ error: "unknown" }, { status: 500 });
   }
 }
