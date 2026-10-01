@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { BookOpen, MapTrifold, Stamp, SunHorizon, UserCircle } from "@phosphor-icons/react";
+import { Bank, BookOpen, MapTrifold, SunHorizon, UserCircle } from "@phosphor-icons/react";
 import type { Screen } from "./state";
 import { snappy } from "./primitives";
 import { sfx } from "@/lib/ona/sound";
@@ -9,7 +9,7 @@ import { sfx } from "@/lib/ona/sound";
 const TABS = [
   { id: "map", label: "Map", Icon: MapTrifold },
   { id: "learn", label: "Learn", Icon: BookOpen },
-  { id: "stamps", label: "Stamps", Icon: Stamp },
+  { id: "museum", label: "Museum", Icon: Bank },
   { id: "almanac", label: "Almanac", Icon: SunHorizon },
   { id: "me", label: "Me", Icon: UserCircle },
 ] as const satisfies readonly { id: Screen; label: string; Icon: unknown }[];

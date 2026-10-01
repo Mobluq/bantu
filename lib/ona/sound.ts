@@ -151,6 +151,15 @@ export const sfx = {
     drumHit(0.32, 196, 0.85);
     tone(1568, 0.5, 0.5, "sine", 0.16);
   },
+  /** The udu pot drum: a palm on the side hole gives a deep, watery bass. */
+  udu() {
+    if (!prefs.sfx) return;
+    tone(150, 0, 0.55, "sine", 0.6, 62);
+    tone(310, 0, 0.12, "sine", 0.12, 160);
+    noise(0, 0.06, 500, 0.2);
+    tone(120, 0.42, 0.45, "sine", 0.45, 58);
+    noise(0.42, 0.05, 500, 0.15);
+  },
   whoosh() {
     if (!prefs.sfx) return;
     noise(0, 0.25, 900, 0.1, "bandpass");

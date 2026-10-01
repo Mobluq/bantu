@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, MotionConfig, motion } from "framer-motion";
-import { useCallback, useEffect, useReducer, useRef } from "react";
+import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { initialState, reducer, type SavedState, type Screen } from "./state";
 import { Splash } from "./screens/Splash";
 import { Onboarding } from "./screens/Onboarding";
@@ -16,6 +16,11 @@ import { Chat } from "./screens/Chat";
 import { Learn } from "./screens/Learn";
 import { roadById } from "@/lib/ona/roads";
 import { Me } from "./screens/Me";
+import { Museum } from "./screens/Museum";
+import { ObjectPage } from "./screens/ObjectPage";
+import { Vertical } from "./screens/Vertical";
+import { TourScreen } from "./screens/TourScreen";
+import { Attract } from "./museum/Attract";
 import { spring } from "./primitives";
 import { stopSpeaking, unlockAudio } from "@/lib/ona/sound";
 
@@ -26,6 +31,7 @@ const JUMP: { id: Screen; label: string }[] = [
   { id: "map", label: "Map" },
   { id: "learn", label: "Learn" },
   { id: "chat", label: "Guide chat" },
+  { id: "museum", label: "Museum" },
   { id: "stamps", label: "Stamps" },
   { id: "artifact", label: "3D object" },
   { id: "almanac", label: "Almanac" },
@@ -34,12 +40,28 @@ const JUMP: { id: Screen; label: string }[] = [
 
 const STORAGE_KEY = "ona.progress.v2";
 
-export function OnaApp({ bare = false, jumpNav = true }: { bare?: boolean; jumpNav?: boolean }) {
-  const [s, dispatch] = useReducer(reducer, initialState);
+type Props = {
+  bare?: boolean;
+  jumpNav?: boolean;
+  /** Open straight onto a museum object (a QR code on a wall label). */
+  startObject?: string;
+  /** Gallery kiosk: no saved progress, starts in the museum, resets after inactivity. */
+  kiosk?: boolean;
+};
+
+const KIOSK_IDLE_MS = 90_000;
+
+export function OnaApp({ bare = false, jumpNav = true, startObject, kiosk = false }: Props) {
+  const [s, dispatch] = useReducer(reducer, initialState, (st) => (kiosk ? { ...st, onboarded: true, screen: "museum" as Screen } : st));
+  const [attract, setAttract] = useState(kiosk);
   const hydrated = useRef(false);
 
   // Restore progress once on the client. Storage can be blocked (private mode), so every access is guarded.
   useEffect(() => {
+    if (kiosk) {
+      hydrated.current = false;
+      return;
+    }
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY);
       if (raw) {
@@ -52,8 +74,33 @@ export function OnaApp({ bare = false, jumpNav = true }: { bare?: boolean; jumpN
     } catch {
       /* start fresh */
     }
+    if (startObject) {
+      dispatch({ type: "go", screen: "museum" });
+      dispatch({ type: "openObject", id: startObject });
+    }
     hydrated.current = true;
-  }, []);
+  }, [kiosk, startObject]);
+
+  // Kiosk: after a quiet spell, clear the visit and return to the attract screen for the next visitor.
+  useEffect(() => {
+    if (!kiosk) return;
+    let t = 0;
+    const arm = () => {
+      window.clearTimeout(t);
+      t = window.setTimeout(() => {
+        stopSpeaking();
+        dispatch({ type: "kioskReset" });
+        setAttract(true);
+      }, KIOSK_IDLE_MS);
+    };
+    const events = ["pointerdown", "keydown", "wheel", "touchmove"] as const;
+    events.forEach((e) => window.addEventListener(e, arm, { passive: true }));
+    arm();
+    return () => {
+      window.clearTimeout(t);
+      events.forEach((e) => window.removeEventListener(e, arm));
+    };
+  }, [kiosk]);
 
   useEffect(() => {
     if (!hydrated.current) return;
@@ -72,13 +119,14 @@ export function OnaApp({ bare = false, jumpNav = true }: { bare?: boolean; jumpN
       saved: s.saved,
       lastDay: s.lastDay,
       lifeAt: s.lifeAt,
+      seen: s.seen,
     };
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
     } catch {
       /* progress just won't persist */
     }
-  }, [s.interests, s.guide, s.lives, s.cowries, s.streak, s.stamps, s.statuses, s.onboarded, s.selectedPlace, s.completed, s.road, s.saved, s.lastDay, s.lifeAt]);
+  }, [s.interests, s.guide, s.lives, s.cowries, s.streak, s.stamps, s.statuses, s.onboarded, s.selectedPlace, s.completed, s.road, s.saved, s.lastDay, s.lifeAt, s.seen]);
 
   // Cowries (lives) regenerate over time; check on mount and every 30s.
   useEffect(() => {
@@ -86,6 +134,12 @@ export function OnaApp({ bare = false, jumpNav = true }: { bare?: boolean; jumpN
     t();
     const id = window.setInterval(t, 30_000);
     return () => window.clearInterval(id);
+  }, []);
+
+  // Offline support for weak museum Wi-Fi (production builds only).
+  useEffect(() => {
+    if (process.env.NODE_ENV !== "production" || !("serviceWorker" in navigator)) return;
+    navigator.serviceWorker.register("/sw.js").catch(() => undefined);
   }, []);
 
   // Browsers start audio suspended until a gesture.
@@ -176,7 +230,7 @@ export function OnaApp({ bare = false, jumpNav = true }: { bare?: boolean; jumpN
       view = <Stamps onCalendar={() => dispatch({ type: "openAlmanac", tab: "calendar" })} stamps={s.stamps} justStamped={s.justStamped} onClearFlash={clearFlash} onOpenEntry={(id) => dispatch({ type: "openEntry", id })} onGo={go} />;
       break;
     case "artifact":
-      view = <Artifact onBack={() => go("stamps")} />;
+      view = <Artifact onBack={() => go(s.artifactFrom === "artifact" ? "museum" : s.artifactFrom)} />;
       break;
     case "almanac":
       view = <Almanac key={s.almanacTab} initialTab={s.almanacTab} onOpen={(id) => dispatch({ type: "openEntry", id })} onGo={go} />;
@@ -187,13 +241,73 @@ export function OnaApp({ bare = false, jumpNav = true }: { bare?: boolean; jumpN
           id={s.entryId}
           onOpen={(id) => dispatch({ type: "openEntry", id })}
           onAsk={(guide) => dispatch({ type: "openChat", guide, from: "entry" })}
-          onBack={() => go("almanac")}
+          onBack={() => go(s.entryFrom === "entry" ? "almanac" : s.entryFrom)}
           onGo={go}
         />
       );
       break;
     case "chat":
-      view = <Chat key={s.chatGuide} guide={s.chatGuide} onBack={() => go(s.chatFrom)} />;
+      view = <Chat key={`${s.chatGuide}-${s.chatAbout ?? ""}`} guide={s.chatGuide} about={s.chatAbout} initial={s.chatAsk} onAsked={() => dispatch({ type: "chatAsked" })} onBack={() => go(s.chatFrom)} />;
+      break;
+    case "museum":
+      view = (
+        <Museum
+          seen={s.seen}
+          tour={s.tour}
+          onObject={(id) => dispatch({ type: "openObject", id })}
+          onVertical={(id) => dispatch({ type: "openVertical", id })}
+          onTour={(id) => dispatch({ type: "openTour", id })}
+          onGo={go}
+        />
+      );
+      break;
+    case "object":
+      view = (
+        <ObjectPage
+          key={s.objectId}
+          id={s.objectId}
+          tour={s.tour}
+          onBack={() => go(s.objectFrom === "object" ? "museum" : s.objectFrom)}
+          onObject={(id) => dispatch({ type: "openObject", id })}
+          onVertical={(id) => dispatch({ type: "openVertical", id })}
+          onAsk={(guide, q) => dispatch({ type: "openChat", guide, from: "object", ask: q || undefined, about: s.objectId })}
+          onEntry={(id) => dispatch({ type: "openEntry", id })}
+          onTurntable={() => dispatch({ type: "openArtifact", from: "object" })}
+          onTourStep={(delta) => dispatch({ type: "tourStep", delta })}
+          onEndTour={() => dispatch({ type: "endTour" })}
+        />
+      );
+      break;
+    case "vertical":
+      view = (
+        <Vertical
+          key={s.verticalId}
+          id={s.verticalId}
+          seen={s.seen}
+          onBack={() => go("museum")}
+          onObject={(id) => dispatch({ type: "openObject", id })}
+          onVertical={(id) => dispatch({ type: "openVertical", id })}
+          onCalendar={() => dispatch({ type: "openAlmanac", tab: "calendar" })}
+          onNightMap={() => {
+            dispatch({ type: "setNight", night: true });
+            go("map");
+          }}
+          onGo={go}
+        />
+      );
+      break;
+    case "tour":
+      view = s.tour ? (
+        <TourScreen
+          key={s.tour.id}
+          id={s.tour.id}
+          progress={s.tour.i}
+          seen={s.seen}
+          onBack={() => go("museum")}
+          onStart={(at) => dispatch({ type: "startTour", id: s.tour!.id, at })}
+          onEnd={() => dispatch({ type: "endTour" })}
+        />
+      ) : null;
       break;
     case "me":
       view = (
@@ -222,6 +336,8 @@ export function OnaApp({ bare = false, jumpNav = true }: { bare?: boolean; jumpN
   }
 
   const screen = (
+    <>
+    {kiosk && <Attract open={attract} onStart={() => setAttract(false)} />}
     <AnimatePresence mode="popLayout" initial={false}>
       <motion.div
         key={s.screen}
@@ -234,12 +350,13 @@ export function OnaApp({ bare = false, jumpNav = true }: { bare?: boolean; jumpN
         {view}
       </motion.div>
     </AnimatePresence>
+    </>
   );
 
   if (bare) {
     return (
       <MotionConfig reducedMotion="user">
-        <div className="ona-root relative mx-auto h-[100dvh] w-full max-w-[480px] overflow-hidden bg-cream sm:my-0 sm:shadow-[0_0_0_1px_rgb(30_20_12_/_0.08),0_40px_80px_-30px_rgb(30_20_12_/_0.4)]">{screen}</div>
+        <div className={`ona-root relative mx-auto h-[100dvh] w-full ${kiosk ? "max-w-[760px]" : "max-w-[480px]"} overflow-hidden bg-cream sm:my-0 sm:shadow-[0_0_0_1px_rgb(30_20_12_/_0.08),0_40px_80px_-30px_rgb(30_20_12_/_0.4)]`}>{screen}</div>
       </MotionConfig>
     );
   }

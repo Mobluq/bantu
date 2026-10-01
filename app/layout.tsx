@@ -45,7 +45,7 @@ function Grain() {
   return (
     <svg
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-[60] h-full w-full opacity-40 mix-blend-multiply"
+      className="pointer-events-none fixed inset-0 z-[60] h-full w-full opacity-40 mix-blend-multiply print:hidden"
     >
       <filter id="grain">
         <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves={3} stitchTiles="stitch" />

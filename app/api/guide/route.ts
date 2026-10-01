@@ -2,6 +2,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { getVercelOidcToken } from "@vercel/oidc";
 import { GUIDES, guideById, type GuideId } from "@/lib/ona/data";
 import { guideFacts } from "@/lib/ona/guideBrief";
+import { objectById } from "@/lib/ona/museum";
 
 export const runtime = "nodejs";
 
@@ -10,7 +11,8 @@ type Turn = { role: "user" | "assistant"; content: string };
 const MAX_TURNS = 16;
 const MAX_CHARS = 600;
 
-function systemPrompt(id: GuideId): string {
+function systemPrompt(id: GuideId, objectId?: string): string {
+  const o = objectId ? objectById(objectId) : undefined;
   const g = guideById(id);
   const secular = id === "keeper";
   return [
@@ -22,7 +24,10 @@ function systemPrompt(id: GuideId): string {
     "Where stories have several versions, say so. Do not describe closed or secret rites (for example Orò or the inside of Egúngún practice). Do not mock any faith, including Christianity and Islam.",
     "Never write a Yorùbá, Igbo or Hausa word without its tone marks and underdots where it has them.",
     `FACTS:\n${guideFacts(id)}`,
-  ].join("\n\n");
+    o
+      ? `The visitor is standing in a museum gallery in front of this object, label number ${o.code}. Answer questions about "this" or "it" about this object.\nOBJECT: ${o.title}${o.local ? ` (${o.local})` : ""}. ${o.culture}, ${o.place}. ${o.date}. ${o.material}.\nLABEL: ${o.label}\nAUDIO GUIDE: ${o.story}`
+      : "",
+  ].filter(Boolean).join("\n\n");
 }
 
 /**
@@ -51,7 +56,7 @@ export async function POST(req: Request) {
   const live = await liveClient();
   if (!live) return Response.json({ error: "no_key" }, { status: 503 });
 
-  let body: { guide?: string; messages?: Turn[] };
+  let body: { guide?: string; messages?: Turn[]; object?: string };
   try {
     body = await req.json();
   } catch {
@@ -66,7 +71,7 @@ export async function POST(req: Request) {
     turns.every((t) => (t.role === "user" || t.role === "assistant") && typeof t.content === "string" && t.content.length <= MAX_CHARS);
   if (!valid) return Response.json({ error: "bad_request" }, { status: 400 });
 
-  const system: Anthropic.Beta.BetaTextBlockParam[] = [{ type: "text", text: systemPrompt(guide), cache_control: { type: "ephemeral" } }];
+  const system: Anthropic.Beta.BetaTextBlockParam[] = [{ type: "text", text: systemPrompt(guide, typeof body.object === "string" ? body.object : undefined), cache_control: { type: "ephemeral" } }];
   const messages = turns.map((t) => ({ role: t.role, content: t.content }));
   try {
     const response = live.gateway

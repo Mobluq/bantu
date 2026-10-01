@@ -15,8 +15,20 @@ import { Cowrie } from "@/components/ona/primitives";
 import { GUIDES } from "@/lib/ona/data";
 import { ENTRIES, FESTIVALS } from "@/lib/ona/almanac";
 import { LESSONS, ROADS } from "@/lib/ona/roads";
+import { GALLERIES, OBJECTS, REFERENCE, TOURS, VERTICALS } from "@/lib/ona/museum";
 
 const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
+
+const MUSEUM_FEATURES: [string, string, string | null, string][] = [
+  ["Label numbers", "Every wall label carries a three-digit number. Visitors type it on the keypad and the object opens.", "/app", "Open the app"],
+  ["QR on every label", "Each code opens its object directly, no install, no sign-in. A print-ready sheet of all labels is built in.", "/labels", "Print the labels"],
+  ["Audio guide", "Each object is told aloud by a guide in character, with a transcript for visitors who cannot listen.", "/visit/307", "Hear the talking drum"],
+  ["Guided tours", "Highlights, a family trail and Gods and spirits, drawn as a route on the floor plan.", null, ""],
+  ["For children", "Every label has a version for ages 5–11, with something to find, count or do.", null, ""],
+  ["Ask the guide", "Visitors ask questions in front of an object; the guide knows which object they are standing at.", "/visit/201", "Ask about the Ifẹ̀ head"],
+  ["Kiosk mode", "For gallery tablets: an attract screen, no saved data, and a reset after 90 seconds idle.", "/kiosk", "Open the kiosk"],
+  ["Works offline", "Once opened, the app keeps working when museum Wi-Fi drops.", null, ""],
+];
 
 function PillLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
@@ -355,6 +367,43 @@ export default function Page() {
                 </Reveal>
               ))}
             </ol>
+          </div>
+        </section>
+
+        {/* 08 — For museums */}
+        <section id="museums" className="mx-auto max-w-[1400px] scroll-mt-24 px-4 py-24 lg:px-12 lg:py-40">
+          <Reveal className="grid gap-8 lg:grid-cols-2 lg:items-end">
+            <div>
+              <Eyebrow>(08) For museums</Eyebrow>
+              <h2 className="mt-6">
+                <span className="t-display block text-[clamp(52px,6vw,104px)]">Built for</span>
+                <span className="t-serif block text-[clamp(50px,5.8vw,100px)] leading-[0.95] text-brick">the gallery floor.</span>
+              </h2>
+            </div>
+            <p className="max-w-[48ch] text-[17px] leading-relaxed text-muted lg:justify-self-end">
+              A demo exhibition, Roads of Nigeria: {OBJECTS.length} objects in {GALLERIES.length} rooms, browsable across {VERTICALS.length} subjects from History to Living culture, with {TOURS.length} guided tours.
+              Its structure follows Nigeria’s national museums, led by the {REFERENCE.name}; ọ̀nà is independent of them.
+            </p>
+          </Reveal>
+          <div className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {MUSEUM_FEATURES.map(([t, d, href, cta], i) => (
+              <Reveal key={t} delay={0.05 * i}>
+                <Bezel className="h-full" coreClassName="h-full p-6">
+                  <div className="flex h-full min-h-[220px] flex-col justify-between gap-6">
+                    <div>
+                      <span className="t-serif text-[44px] leading-[0.8] text-brick">{String(i + 1).padStart(2, "0")}</span>
+                      <h3 className="t-display mt-3 text-[30px] leading-[0.95]">{t}</h3>
+                      <p className="mt-2 text-[14.5px] leading-relaxed text-muted">{d}</p>
+                    </div>
+                    {href && (
+                      <a href={href} className="inline-flex items-center gap-1.5 self-start text-[14px] font-semibold underline underline-offset-4">
+                        {cta} <ArrowUpRight size={14} weight="bold" />
+                      </a>
+                    )}
+                  </div>
+                </Bezel>
+              </Reveal>
+            ))}
           </div>
         </section>
 

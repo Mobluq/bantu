@@ -150,7 +150,7 @@ export function Stamps({
           })}
         </div>
       </div>
-      <TabBar active="stamps" onGo={onGo} />
+      <TabBar active="me" onGo={onGo} />
     </div>
   );
 }

@@ -8,6 +8,7 @@
 import { ENTRIES, FESTIVALS, MONTHS, type Entry } from "./almanac";
 import { GUIDES, PLACES, TALES, guideById, type GuideId } from "./data";
 import { LESSONS, ROADS, type RoadId } from "./roads";
+import { OBJECTS } from "./museum";
 
 export const fold = (s: string) =>
   s
@@ -20,7 +21,7 @@ type Doc = {
   id: string;
   /** Entry id or road id this fact belongs to, so a guide prefers its own. */
   owner: string;
-  kind: "row" | "abroad" | "story" | "note" | "festival" | "place" | "word" | "fact" | "tale";
+  kind: "row" | "abroad" | "story" | "note" | "festival" | "place" | "word" | "fact" | "tale" | "object";
   /** Spoken form of the fact. */
   say: (self: boolean) => string;
   keys: string;
@@ -32,6 +33,10 @@ const STOP = new Set(
 );
 
 const SYN: Record<string, string[]> = {
+  mean: ["show", "debate", "nobody", "scholars", "meaning", "stand"],
+  meaning: ["show", "debate", "scholars"],
+  why: ["because", "so that", "meant"],
+  old: ["century", "years", "bce", "date"],
   color: ["colour", "colours"],
   colors: ["colour", "colours"],
   colour: ["colours"],
@@ -70,7 +75,7 @@ const SYN: Record<string, string[]> = {
   king: ["oba", "emir", "ooni", "obi", "ruler", "kingdom"],
   queen: ["amina", "zazzau"],
   create: ["creation", "creator", "made"],
-  made: ["creation", "create"],
+  made: ["creation", "create", "cast", "carved", "modelled", "woven", "fired"],
   story: ["tale", "story"],
   tale: ["story", "tale"],
 };
@@ -188,6 +193,22 @@ function buildDocs(): Doc[] {
       say: () => `${t.title}, ${t.told}. ${t.text}`,
     });
   }
+  // Museum objects: each sentence of the label and audio guide is a fact the guide can give.
+  for (const o of OBJECTS) {
+    const head = `${o.title} ${o.local ?? ""} ${o.culture} ${o.place} ${o.date} ${o.material}`;
+    const sentences = [...new Set(`${o.label} ${o.story}`.match(/[^.!?]+[.!?]+/g)?.map((x) => x.trim()) ?? [])];
+    sentences.forEach((sen, i) =>
+      docs.push({ id: `obj:${o.id}:${i}`, owner: `obj:${o.id}`, kind: "object", title: o.title, keys: fold(`${head} ${sen}`), say: () => sen }),
+    );
+    docs.push({
+      id: `obj:${o.id}:card`,
+      owner: `obj:${o.id}`,
+      kind: "object",
+      title: o.title,
+      keys: fold(`${head} what is this when made date material where from`),
+      say: () => `${o.title}${o.local ? ` (${o.local})` : ""}: ${o.culture}, ${o.place}. ${o.date}. ${o.material}.`,
+    });
+  }
   return docs;
 }
 
@@ -297,7 +318,8 @@ function overview(e: Entry, self: boolean): string {
   return `${lead}, of the ${e.people}. ${rows}`;
 }
 
-export function guideAnswer(id: GuideId, question: string, seen: string[] = []): MindReply {
+/** `about`: the museum object the visitor is standing at, if any. */
+export function guideAnswer(id: GuideId, question: string, seen: string[] = [], about?: string): MindReply {
   const g = guideById(id);
   const v = VOICE[id] ?? VOICE.keeper!;
   const q = fold(question).trim();
@@ -379,9 +401,10 @@ export function guideAnswer(id: GuideId, question: string, seen: string[] = []):
   // General retrieval.
   const qt = tokens(question);
   const expanded = new Set(qt.flatMap((t) => [t, ...(SYN[t] ?? [])].map((x) => fold(x))));
-  const focus = aboutOther?.id;
+  const namedObject = OBJECTS.find((o) => q.includes(fold(o.title)) || (o.local && q.includes(fold(o.local))));
+  const focus = aboutOther?.id ?? (namedObject ? `obj:${namedObject.id}` : about ? `obj:${about}` : undefined);
   // "you/your" questions are about this guide: only its own facts may answer.
-  const aboutSelf = !aboutOther && /\b(you|your|yours|yourself)\b/.test(q);
+  const aboutSelf = !aboutOther && !about && /\b(you|your|yours|yourself)\b/.test(q);
   const scored = docs()
     .filter((d) => !seen.includes(d.id))
     .filter((d) => !aboutSelf || d.owner === id || (d.owner === road && d.kind !== "word"))
@@ -403,7 +426,7 @@ export function guideAnswer(id: GuideId, question: string, seen: string[] = []):
 
   if (scored.length) {
     const top = scored[0];
-    const second = scored[1] && scored[1].s >= top.s - 0.5 && scored[1].d.kind === top.d.kind && scored[1].d.owner === top.d.owner ? scored[1] : null;
+    const second = scored[1] && scored[1].s >= top.s - (top.d.kind === "object" ? 1.5 : 0.5) && scored[1].d.kind === top.d.kind && scored[1].d.owner === top.d.owner ? scored[1] : null;
     const parts = [top, second].filter(Boolean).map((x) => x!.d.say(x!.d.owner === id));
     return reply(`${opener} ${parts.join(" ")}`, [top.d.id, ...(second ? [second.d.id] : [])]);
   }

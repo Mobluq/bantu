@@ -21,7 +21,7 @@ const STARTERS: Record<string, string[]> = {
   keeper: ["Who are the òrìṣà?", "What is an almanac entry?", "Which roads can I walk?"],
 };
 
-export function Chat({ guide, onBack }: { guide: GuideId; onBack: () => void }) {
+export function Chat({ guide, onBack, initial, onAsked, about }: { guide: GuideId; onBack: () => void; initial?: string | null; onAsked?: () => void; about?: string | null }) {
   const g = guideById(guide);
   const [msgs, setMsgs] = useState<Msg[]>([{ role: "assistant", content: g.greeting }]);
   const [draft, setDraft] = useState("");
@@ -38,7 +38,7 @@ export function Chat({ guide, onBack }: { guide: GuideId; onBack: () => void }) 
   const answerLocally = async (next: Msg[], q: string) => {
     setBusy(true);
     await new Promise((r) => window.setTimeout(r, 450 + Math.min(900, q.length * 12)));
-    const r = guideAnswer(guide, q, seen.current);
+    const r = guideAnswer(guide, q, seen.current, about ?? undefined);
     seen.current = [...seen.current, ...r.used].slice(-40);
     sfx.cowrie();
     setMsgs([...next, { role: "assistant", content: r.text, offline: true, suggestions: r.suggestions }]);
@@ -60,7 +60,7 @@ export function Chat({ guide, onBack }: { guide: GuideId; onBack: () => void }) 
         method: "POST",
         headers: { "content-type": "application/json" },
         // The opening greeting is UI copy, not a model turn: send only the real exchange.
-        body: JSON.stringify({ guide, messages: next.slice(1).map(({ role, content }) => ({ role, content })) }),
+        body: JSON.stringify({ guide, object: about ?? undefined, messages: next.slice(1).map(({ role, content }) => ({ role, content })) }),
       });
       const data = (await res.json().catch(() => ({}))) as { reply?: string; error?: string };
       if (data.reply) {
@@ -78,6 +78,16 @@ export function Chat({ guide, onBack }: { guide: GuideId; onBack: () => void }) 
       return answerLocally(next, q);
     }
   };
+
+  // A question carried in from an object page is asked as soon as the chat opens.
+  const askedInitial = useRef(false);
+  useEffect(() => {
+    if (!initial || askedInitial.current) return;
+    askedInitial.current = true;
+    onAsked?.();
+    void send(initial);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initial]);
 
   const dark = g.tone.bg !== "var(--color-paper)";
 

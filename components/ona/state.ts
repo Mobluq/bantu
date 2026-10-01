@@ -1,6 +1,7 @@
 import type { GuideId, PlaceStatus } from "@/lib/ona/data";
 import { PLACES } from "@/lib/ona/data";
 import { LESSONS, ROADS, lessonsForRoad, type RoadId } from "@/lib/ona/roads";
+import { tourById, type VerticalId } from "@/lib/ona/museum";
 
 export type Screen =
   | "splash"
@@ -14,7 +15,11 @@ export type Screen =
   | "almanac"
   | "entry"
   | "chat"
-  | "me";
+  | "me"
+  | "museum"
+  | "object"
+  | "vertical"
+  | "tour";
 
 export type OnaState = {
   screen: Screen;
@@ -41,6 +46,18 @@ export type OnaState = {
   /** When the next cowrie (life) regenerates, ms since epoch; null when lives are full. */
   lifeAt: number | null;
   almanacTab: "entries" | "calendar";
+  /** Museum: objects this visitor has opened, the open object, an active tour, the open vertical. */
+  seen: string[];
+  objectId: string;
+  tour: { id: string; i: number } | null;
+  verticalId: VerticalId;
+  /** A question to send as soon as the chat opens. */
+  chatAsk: string | null;
+  /** The museum object a chat was opened from, so the guide knows what the visitor is looking at. */
+  chatAbout: string | null;
+  artifactFrom: Screen;
+  objectFrom: Screen;
+  entryFrom: Screen;
 };
 
 export type SavedWord = { term: string; meaning: string; road: RoadId };
@@ -54,7 +71,7 @@ const dayDiff = (a: string, b: string) => Math.round((Date.parse(b) - Date.parse
 /** The slice of state worth keeping between visits. */
 export type SavedState = Pick<
   OnaState,
-  "interests" | "guide" | "lives" | "cowries" | "streak" | "stamps" | "statuses" | "onboarded" | "selectedPlace" | "completed" | "road" | "saved" | "lastDay" | "lifeAt"
+  "interests" | "guide" | "lives" | "cowries" | "streak" | "stamps" | "statuses" | "onboarded" | "selectedPlace" | "completed" | "road" | "saved" | "lastDay" | "lifeAt" | "seen"
 >;
 
 const baseStatuses = (): Record<string, PlaceStatus> => {
@@ -87,6 +104,15 @@ export const initialState: OnaState = {
   lastDay: null,
   lifeAt: null,
   almanacTab: "entries",
+  seen: [],
+  objectId: "ife-head",
+  tour: null,
+  verticalId: "history",
+  chatAsk: null,
+  chatAbout: null,
+  artifactFrom: "stamps",
+  objectFrom: "museum",
+  entryFrom: "almanac",
 };
 
 export type Action =
@@ -103,10 +129,19 @@ export type Action =
   | { type: "openAlmanac"; tab: "entries" | "calendar" }
   | { type: "finishLesson"; id: string; earned: number }
   | { type: "openEntry"; id: string }
-  | { type: "openChat"; guide: GuideId; from: Screen }
+  | { type: "openChat"; guide: GuideId; from: Screen; ask?: string; about?: string }
+  | { type: "openObject"; id: string }
+  | { type: "openVertical"; id: VerticalId }
+  | { type: "openTour"; id: string }
+  | { type: "startTour"; id: string; at?: number }
+  | { type: "tourStep"; delta: 1 | -1 }
+  | { type: "endTour" }
+  | { type: "openArtifact"; from: Screen }
+  | { type: "chatAsked" }
   | { type: "clearStampFlash" }
   | { type: "hydrate"; saved: Partial<SavedState> }
-  | { type: "reset" };
+  | { type: "reset" }
+  | { type: "kioskReset" };
 
 /** The next lesson to take on a road: the first not yet completed. */
 export const nextLesson = (road: RoadId, completed: string[]) => lessonsForRoad(road).find((l) => !completed.includes(l.id)) ?? null;
@@ -119,6 +154,7 @@ export function reducer(state: OnaState, action: Action): OnaState {
       return {
         ...state,
         screen: action.screen,
+        artifactFrom: action.screen === "artifact" ? state.screen : state.artifactFrom,
         onboarded: state.onboarded || action.screen === "map",
         almanacTab: action.screen === "almanac" ? "entries" : state.almanacTab,
       };
@@ -191,9 +227,37 @@ export function reducer(state: OnaState, action: Action): OnaState {
       };
     }
     case "openEntry":
-      return { ...state, screen: "entry", entryId: action.id };
+      return { ...state, screen: "entry", entryId: action.id, entryFrom: state.screen === "entry" ? state.entryFrom : state.screen };
     case "openChat":
-      return { ...state, screen: "chat", chatGuide: action.guide, chatFrom: action.from };
+      return { ...state, screen: "chat", chatGuide: action.guide, chatFrom: action.from, chatAsk: action.ask ?? null, chatAbout: action.about ?? null };
+    case "chatAsked":
+      return { ...state, chatAsk: null };
+    case "openObject":
+      return { ...state, screen: "object", objectId: action.id, objectFrom: state.screen === "object" || state.screen === "chat" || state.screen === "entry" || state.screen === "artifact" ? state.objectFrom : state.screen, seen: state.seen.includes(action.id) ? state.seen : [...state.seen, action.id] };
+    case "openVertical":
+      return { ...state, screen: "vertical", verticalId: action.id };
+    case "openTour":
+      return { ...state, screen: "tour", tour: state.tour?.id === action.id ? state.tour : { id: action.id, i: -1 } };
+    case "startTour": {
+      const t = tourById(action.id);
+      if (!t) return state;
+      const i = action.at ?? 0;
+      const id = t.stops[i];
+      return { ...state, tour: { id: t.id, i }, screen: "object", objectId: id, seen: state.seen.includes(id) ? state.seen : [...state.seen, id] };
+    }
+    case "tourStep": {
+      const t = state.tour && tourById(state.tour.id);
+      if (!t || !state.tour) return state;
+      const i = state.tour.i + action.delta;
+      if (i >= t.stops.length) return { ...state, screen: "tour", tour: { id: t.id, i: t.stops.length } };
+      if (i < 0) return { ...state, screen: "tour" };
+      const id = t.stops[i];
+      return { ...state, tour: { id: t.id, i }, objectId: id, screen: "object", seen: state.seen.includes(id) ? state.seen : [...state.seen, id] };
+    }
+    case "endTour":
+      return { ...state, tour: null, screen: "museum" };
+    case "openArtifact":
+      return { ...state, screen: "artifact", artifactFrom: action.from };
     case "clearStampFlash":
       return { ...state, justStamped: null };
     case "hydrate": {
@@ -202,6 +266,8 @@ export function reducer(state: OnaState, action: Action): OnaState {
       if (next.lastDay && dayDiff(next.lastDay, localDay()) > 1) next.streak = 0;
       return next;
     }
+    case "kioskReset":
+      return { ...initialState, statuses: baseStatuses(), onboarded: true, screen: "museum" };
     case "reset":
       return { ...initialState, statuses: baseStatuses(), screen: "splash" };
     default:

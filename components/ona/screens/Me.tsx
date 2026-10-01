@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowCounterClockwise, Moon, MusicNotes, SpeakerHigh, X } from "@phosphor-icons/react";
+import { ArrowCounterClockwise, ArrowRight, Moon, MusicNotes, SpeakerHigh, Stamp, X } from "@phosphor-icons/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { guideById, type GuideId } from "@/lib/ona/data";
@@ -96,6 +96,15 @@ export function Me({
           ))}
           <Mono className="ml-1.5 text-[9.5px] text-muted">{lives < MAX_LIVES ? "One returns every 15 min" : "Cowries full"}</Mono>
         </div>
+
+        <button type="button" onClick={() => onGo("stamps")} className="mt-6 flex w-full items-center gap-3 rounded-[20px] bg-forest p-4 text-left text-gold">
+          <Stamp size={28} weight="fill" />
+          <span className="min-w-0 flex-1">
+            <span className="t-display block text-[26px] leading-none">Stamp book</span>
+            <span className="mt-1 block text-[13px] text-cream/85">{stamps} stamps from the roads you have walked</span>
+          </span>
+          <ArrowRight size={20} weight="light" />
+        </button>
 
         <section aria-labelledby="saved-h" className="mt-9">
           <div className="flex items-baseline justify-between">

@@ -11,6 +11,7 @@ const SECTIONS = [
   ["map", "The map"],
   ["lessons", "Lessons"],
   ["guardrails", "Guardrails"],
+  ["museums", "Museums"],
 ] as const;
 
 /** Fixed bottom-left index: which numbered section is on screen (IntersectionObserver, no scroll listeners). */
