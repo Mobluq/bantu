@@ -57,6 +57,26 @@
   background-size: 5px 5px;
 }
 
+/* Graph paper ground (after Illoca): faint ink grid */
+@utility graph {
+  background-image:
+    linear-gradient(rgb(30 20 12 / 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(30 20 12 / 0.06) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+@utility graph-light {
+  background-image:
+    linear-gradient(rgb(251 245 230 / 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(251 245 230 / 0.07) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Die-cut sticker: a paper outline traced around any shape, then a soft lift */
+@utility sticker {
+  filter: drop-shadow(2px 0 0 var(--color-paper)) drop-shadow(-2px 0 0 var(--color-paper)) drop-shadow(0 2px 0 var(--color-paper))
+    drop-shadow(0 -2px 0 var(--color-paper)) drop-shadow(0 8px 12px rgb(30 20 12 / 0.28));
+}
+
 /* Perforated postage-stamp edge */
 @utility stamp-edge {
   padding: 8px;

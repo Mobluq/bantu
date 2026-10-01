@@ -149,7 +149,7 @@ export const PLACES: Place[] = [
   },
   {
     id: "bida", name: "Bida", people: "Nupe", culture: "nupe", state: "Niger State", status: "open", guide: "tsoede",
-    title: "Tsoede’s canoe", blurb: "Nupe tradition says Tsoede escaped down the Niger from Idah in a bronze canoe.",
+    title: "Tsoede’s canoe", blurb: "Nupe tradition says Tsoede escaped up the Niger from Idah in a bronze canoe.",
     label: { dx: -8, dy: 4, anchor: "end" },
   },
   {
@@ -164,7 +164,7 @@ export const PLACES: Place[] = [
   },
   {
     id: "daura", name: "Daura", people: "Hausa", culture: "hausa", state: "Katsina State", status: "hidden", guide: "bayajidda",
-    title: "The snake in the well", blurb: "",
+    title: "The snake in the well", blurb: "Bayajidda killed the snake guarding Daura’s well, and the Hausa states began.",
     label: { dx: 8, dy: 4, anchor: "start" },
   },
   {
@@ -247,10 +247,14 @@ export type StampDef = {
   bg: string;
   fg: string;
   opens: "almanac" | "artifact" | null;
+  /** Almanac entry the stamp opens, when `opens` is "almanac". */
+  entry?: string;
 };
 
 export const STAMPS: StampDef[] = [
-  { id: "osogbo", title: "Ọ̀ṣun-Òṣogbo Grove", sub: "UNESCO site · 2005", value: "₦15", emblem: "osun", bg: "var(--color-gold)", fg: "var(--color-brick)", opens: "almanac" },
+  { id: "osogbo", title: "Ọ̀ṣun-Òṣogbo Grove", sub: "UNESCO site · 2005", value: "₦15", emblem: "osun", bg: "var(--color-gold)", fg: "var(--color-brick)", opens: "almanac", entry: "osun" },
+  { id: "nri", title: "Nri, the peace town", sub: "Anambra · Igbo road", value: "₦30", emblem: "ala", bg: "var(--color-indigo)", fg: "var(--color-cream)", opens: "almanac", entry: "ala" },
+  { id: "daura", title: "Kusugu well, Daura", sub: "Katsina · Hausa road", value: "₦35", emblem: "bayajidda", bg: "var(--color-clay)", fg: "var(--color-ink)", opens: "almanac", entry: "bayajidda" },
   { id: "ife", title: "The Ifẹ̀ head", sub: "Ilé-Ifẹ̀ · copper alloy", value: "₦20", emblem: "ife", bg: "var(--color-clay)", fg: "var(--color-ink)", opens: "artifact" },
   { id: "lagos", title: "Eyo masquerade", sub: "Lagos Island", value: "₦10", emblem: "eyo", bg: "var(--color-paper)", fg: "var(--color-ink)", opens: null },
   { id: "benin", title: "Benin bronzes", sub: "Benin City · Edo", value: "₦25", emblem: "benin", bg: "var(--color-ochre)", fg: "var(--color-ink)", opens: null },

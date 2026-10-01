@@ -1,157 +1,174 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, Pause, Play } from "@phosphor-icons/react";
-import { useEffect, useState } from "react";
-import { ALMANAC_ESU as E } from "@/lib/ona/data";
+import { MagnifyingGlass, X } from "@phosphor-icons/react";
+import { useMemo, useState } from "react";
+import { CATEGORIES, ENTRIES, FESTIVALS, MONTHS, type Category } from "@/lib/ona/almanac";
 import { TabBar } from "../TabBar";
-import { Emblem, Mono, Waveform, snappy, spring } from "../primitives";
+import { Emblem, Mono, snappy, spring } from "../primitives";
 import type { Screen } from "../state";
 
-function Skeleton() {
-  return (
-    <div className="flex flex-col gap-3 px-5 pt-5" aria-label="Loading entry" role="status">
-      <div className="skeleton h-[88px] w-40 rounded" />
-      <div className="skeleton h-5 w-64 rounded" />
-      <div className="skeleton mt-3 h-11 w-full rounded-full" />
-      {Array.from({ length: 4 }, (_, i) => (
-        <div key={i} className="grid grid-cols-[96px_1fr] gap-3 border-t border-ink/10 pt-3">
-          <div className="skeleton h-3 w-16 rounded" />
-          <div className="skeleton h-4 rounded" />
-        </div>
-      ))}
-    </div>
-  );
-}
+/** Strip tone marks and underdots so "osun" finds "Ọ̀ṣun". */
+const fold = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 
-export function Almanac({ onGo }: { onGo: (s: Screen) => void }) {
-  const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<"nigeria" | "atlantic">("nigeria");
-  const [playing, setPlaying] = useState(false);
-  useEffect(() => {
-    const t = window.setTimeout(() => setLoading(false), 650);
-    return () => window.clearTimeout(t);
-  }, []);
-  const rows = tab === "nigeria" ? E.nigeria : E.atlantic;
+export function Almanac({ onOpen, onGo }: { onOpen: (id: string) => void; onGo: (s: Screen) => void }) {
+  const [tab, setTab] = useState<"entries" | "calendar">("entries");
+  const [q, setQ] = useState("");
+  const [cat, setCat] = useState<Category | null>(null);
+
+  const list = useMemo(() => {
+    const f = fold(q.trim());
+    return ENTRIES.filter((e) => (!cat || e.category === cat) && (!f || fold(`${e.name} ${e.full} ${e.people} ${e.rows.map((r) => r[1]).join(" ")}`).includes(f)));
+  }, [q, cat]);
+
+  const thisMonth = 10; // the prototype's calendar opens on October
+  const dated = FESTIVALS.filter((f) => f.months.length > 0);
+  const moving = FESTIVALS.filter((f) => f.months.length === 0);
 
   return (
     <div className="flex h-full flex-col bg-cream text-ink">
       <div className="no-scrollbar flex-1 overflow-y-auto">
-        <section className="torn-bottom ht-light relative h-[300px] overflow-hidden bg-brick text-cream">
-          <motion.div initial={{ rotate: -10, opacity: 0 }} animate={{ rotate: 8, opacity: 1 }} transition={spring} className="absolute -right-20 top-[92px]">
-            <Emblem name="esu" size={220} color="var(--color-cream)" bg="var(--color-brick)" rough={2.8} />
-          </motion.div>
-          <div className="relative flex items-center justify-between pl-1.5 pr-3.5 pt-12">
-            <button type="button" onClick={() => onGo("stamps")} aria-label="Back" className="flex size-11 items-center justify-center">
-              <ArrowLeft size={22} weight="light" />
-            </button>
-            <Mono>The Almanac</Mono>
+        <header className="ht-light relative overflow-hidden bg-ink px-5 pb-6 pt-14 text-cream">
+          <div className="absolute right-4 top-10">
+            <Emblem name="keeper" size={80} color="var(--color-gold)" bg="var(--color-ink)" rough={1.8} />
           </div>
-          <div className="absolute bottom-8 left-5">
-            <Mono className="mb-0.5 block text-[10px]">Entry</Mono>
-            <div className="t-serif text-[80px] leading-[0.8]">Nº {E.number}</div>
-          </div>
-        </section>
-
-        {loading ? (
-          <Skeleton />
-        ) : (
-          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={spring}>
-            <div className="flex items-end justify-between px-5 pt-4">
-              <h1 className="t-display text-[96px]">{E.name}</h1>
+          <Mono className="relative text-gold">The Almanac · {ENTRIES.length} entries</Mono>
+          <h1 className="relative mt-3 leading-[0.86]">
+            <span className="t-display block text-[56px]">Gods, heroes</span>
+            <span className="t-serif block text-[54px] text-gold">&amp; feast days</span>
+          </h1>
+          <div role="tablist" aria-label="Almanac view" className="relative mt-5 flex rounded-full p-[3px] ring-1 ring-cream/30">
+            {(
+              [
+                ["entries", "Entries"],
+                ["calendar", "Festival calendar"],
+              ] as const
+            ).map(([id, label]) => (
               <button
+                key={id}
                 type="button"
-                onClick={() => setPlaying((p) => !p)}
-                aria-pressed={playing}
-                className="mb-2 flex h-11 items-center gap-2 rounded-full bg-ink pl-1.5 pr-4 text-[13.5px] font-semibold text-cream"
+                role="tab"
+                aria-selected={tab === id}
+                onClick={() => setTab(id)}
+                className={`relative h-[38px] flex-1 rounded-full text-[13.5px] font-semibold ${tab === id ? "text-ink" : "text-cream"}`}
               >
-                <span className="flex size-8 items-center justify-center rounded-full bg-gold text-ink">
-                  {playing ? <Pause size={11} weight="fill" /> : <Play size={11} weight="fill" />}
-                </span>
-                {playing ? <Waveform bars={7} height={14} playing /> : "Listen"}
+                {tab === id && <motion.span layoutId="alm-tab" transition={snappy} className="absolute inset-0 rounded-full bg-cream" />}
+                <span className="relative">{label}</span>
               </button>
-            </div>
-            <p className="t-serif px-5 pt-1 text-[21px] leading-[1.25] text-brick">{E.full}</p>
+            ))}
+          </div>
+        </header>
 
-            <div role="tablist" aria-label="View" className="mx-5 mt-[18px] flex rounded-full border-[1.5px] border-ink p-[3px]">
-              {(
-                [
-                  ["nigeria", "In Nigeria"],
-                  ["atlantic", "Across the Atlantic"],
-                ] as const
-              ).map(([id, label]) => (
-                <button
-                  key={id}
-                  type="button"
-                  role="tab"
-                  aria-selected={tab === id}
-                  onClick={() => setTab(id)}
-                  className={`relative h-[38px] flex-1 rounded-full text-[13.5px] font-semibold ${tab === id ? "text-cream" : "text-ink"}`}
-                >
-                  {tab === id && <motion.span layoutId="almanac-tab" transition={snappy} className="absolute inset-0 rounded-full bg-ink" />}
-                  <span className="relative">{label}</span>
-                </button>
-              ))}
-            </div>
-
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.dl
-                key={tab}
-                initial={{ opacity: 0, x: tab === "atlantic" ? 24 : -24 }}
-                animate={{ opacity: 1, x: 0, transition: snappy }}
-                exit={{ opacity: 0, transition: { duration: 0.1 } }}
-                className="px-5 pt-4"
-              >
-                {rows.map(([k, v], i) => (
-                  <motion.div
-                    key={k}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ ...snappy, delay: 0.04 * i }}
-                    className="grid grid-cols-[96px_minmax(0,1fr)] gap-3 border-t border-ink/20 py-[11px]"
-                  >
-                    <dt className="t-mono pt-0.5 text-[10px] text-brick">{k}</dt>
-                    <dd className="text-[14.5px] leading-[1.4]">{v}</dd>
-                  </motion.div>
-                ))}
-              </motion.dl>
-            </AnimatePresence>
-
-            <article className="mx-5 mt-3.5 border-t-2 border-ink pt-[18px]">
-              <Mono className="text-brick">Story · told in many versions</Mono>
-              <h2 className="t-display mt-2 text-[40px]">{E.story.title}</h2>
-              <p className="mt-3 text-[15.5px] leading-[1.55]">
-                <span className="t-serif float-left mr-2 mt-1.5 text-[66px] leading-[0.78] text-brick">È</span>
-                {E.story.body}
-              </p>
-              <p className="t-serif mt-3 text-[20px] leading-[1.3]">{E.story.moral}</p>
-            </article>
-
-            <aside className="mx-5 mt-5 flex gap-3 rounded bg-ink p-4 text-cream">
-              <span className="t-display-wide text-[34px] leading-[0.8] text-gold">!</span>
-              <p className="text-[14px] leading-[1.5]">
-                <b className="text-gold">Not the devil.</b> {E.note}
-              </p>
-            </aside>
-
-            <div className="mx-5 mt-[22px]">
-              <Mono className="text-muted">Keep reading</Mono>
-              <div className="mt-2.5 flex flex-wrap gap-2">
-                {E.related.map((t) => (
-                  <span key={t} className="flex h-10 items-center rounded-full border-[1.5px] border-ink px-3.5 text-[14px] font-medium">
-                    {t}
-                  </span>
-                ))}
+        <AnimatePresence mode="wait" initial={false}>
+          {tab === "entries" ? (
+            <motion.div key="entries" initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { duration: 0.25 } }} exit={{ opacity: 0, transition: { duration: 0.1 } }}>
+              <div className="px-5 pt-5">
+                <label htmlFor="alm-search" className="sr-only">
+                  Search the almanac
+                </label>
+                <div className="flex h-12 items-center gap-2 rounded-full bg-paper px-4 ring-1 ring-ink/15 focus-within:ring-2 focus-within:ring-brick">
+                  <MagnifyingGlass size={18} weight="light" />
+                  <input
+                    id="alm-search"
+                    value={q}
+                    onChange={(e) => setQ(e.target.value)}
+                    placeholder="Search: osun, thunder, Hausa…"
+                    className="h-full flex-1 bg-transparent text-[15px] outline-none placeholder:text-muted"
+                  />
+                  {q && (
+                    <button type="button" onClick={() => setQ("")} aria-label="Clear search" className="flex size-8 items-center justify-center">
+                      <X size={16} weight="light" />
+                    </button>
+                  )}
+                </div>
+                <div className="no-scrollbar -mx-5 mt-3 flex gap-2 overflow-x-auto px-5">
+                  {[null, ...CATEGORIES].map((c) => (
+                    <button
+                      key={c ?? "all"}
+                      type="button"
+                      onClick={() => setCat(c)}
+                      aria-pressed={cat === c}
+                      className={`h-9 shrink-0 rounded-full px-3.5 text-[13px] font-semibold ring-1 ${cat === c ? "bg-ink text-cream ring-ink" : "ring-ink/25"}`}
+                    >
+                      {c ?? "All"}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-            <div className="mx-5 mt-[22px] flex items-center justify-between border-t border-ink/20 pb-8 pt-3.5">
-              <Mono className="text-[9.5px] text-muted">Reviewed by [ADVISOR NAME]</Mono>
-              <Mono className="text-[10px] text-brick">Sources (4)</Mono>
-            </div>
-          </motion.div>
-        )}
+
+              {list.length === 0 ? (
+                <div className="mx-5 mt-6 flex flex-col items-start gap-3 rounded-[20px] border-[1.5px] border-dashed border-ink/30 p-5">
+                  <span className="t-display text-[28px]">Nothing under “{q}”</span>
+                  <p className="text-[14px] text-muted">Try a people (Igbo), a power (thunder) or a name without its marks (sango).</p>
+                </div>
+              ) : (
+                <ul className="mt-4 px-5 pb-8">
+                  {list.map((e, k) => (
+                    <motion.li key={e.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: Math.min(k, 8) * 0.03 }}>
+                      <button type="button" onClick={() => onOpen(e.id)} className="group flex w-full items-center gap-3.5 border-t border-ink/15 py-3.5 text-left">
+                        <span className="flex size-14 shrink-0 items-center justify-center rounded-[14px]" style={{ background: e.tone.bg }}>
+                          <Emblem name={e.emblem} size={40} color={e.tone.fg} bg={e.tone.bg} rough={1.2} speckle={false} />
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="flex items-baseline gap-2">
+                            <span className="t-display text-[28px]">{e.name}</span>
+                            <Mono className="text-[9.5px] text-muted">Nº {e.number}</Mono>
+                          </span>
+                          <span className="block truncate text-[13px] text-muted">
+                            {e.people} · {e.category}
+                          </span>
+                        </span>
+                        <span className="t-serif text-[22px] text-brick transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-1">→</span>
+                      </button>
+                    </motion.li>
+                  ))}
+                </ul>
+              )}
+            </motion.div>
+          ) : (
+            <motion.div key="calendar" initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { duration: 0.25 } }} exit={{ opacity: 0, transition: { duration: 0.1 } }} className="px-5 pb-8 pt-5">
+              <p className="text-[14px] leading-[1.45] text-muted">Typical windows. Several dates are set locally each year, and Sallah festivals follow the lunar calendar.</p>
+              {MONTHS.map((m, idx) => {
+                const fs = dated.filter((f) => f.months[0] === idx + 1);
+                if (fs.length === 0) return null;
+                return (
+                  <section key={m} className="mt-5">
+                    <div className="flex items-center gap-2">
+                      <span className="t-display text-[30px]">{m}</span>
+                      {idx + 1 === thisMonth && <span className="rounded-full bg-brick px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-cream">This month</span>}
+                    </div>
+                    {fs.map((f) => (
+                      <FestivalRow key={`${m}-${f.id}`} f={f} />
+                    ))}
+                  </section>
+                );
+              })}
+              <section className="mt-6">
+                <span className="t-display text-[30px]">Moving dates</span>
+                {moving.map((f) => (
+                  <FestivalRow key={f.id} f={f} />
+                ))}
+              </section>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
       <TabBar active="almanac" onGo={onGo} />
+    </div>
+  );
+}
+
+function FestivalRow({ f }: { f: (typeof FESTIVALS)[number] }) {
+  return (
+    <div className="mt-2 grid grid-cols-[minmax(0,1fr)] gap-1 border-t border-ink/15 pt-3">
+      <div className="flex items-baseline justify-between gap-3">
+        <span className="text-[16px] font-bold">{f.name}</span>
+        <Mono className="shrink-0 text-[9.5px] text-brick">{f.people}</Mono>
+      </div>
+      <span className="t-serif text-[16px] text-muted">
+        {f.place} · {f.when}
+      </span>
+      <p className="text-[13.5px] leading-[1.45]">{f.text}</p>
     </div>
   );
 }

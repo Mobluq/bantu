@@ -7,7 +7,7 @@ import { snappy } from "./primitives";
 
 const TABS = [
   { id: "map", label: "Map", Icon: MapTrifold },
-  { id: "lesson", label: "Learn", Icon: BookOpen },
+  { id: "learn", label: "Learn", Icon: BookOpen },
   { id: "stamps", label: "Stamps", Icon: Stamp },
   { id: "almanac", label: "Almanac", Icon: SunHorizon },
   { id: "me", label: "Me", Icon: UserCircle },

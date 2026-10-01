@@ -4,6 +4,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Fire, LockSimple, Moon, Play, Sun } from "@phosphor-icons/react";
 import { PLACES, TALES, TOTAL_PLACES, guideById, type PlaceStatus } from "@/lib/ona/data";
 import { NigeriaMap } from "../NigeriaMap";
+import { ROADS, lessonsForRoad } from "@/lib/ona/roads";
+import { nextLesson } from "../state";
 import { TabBar } from "../TabBar";
 import { Cowrie, Emblem, KeyCap, Mono, PrimaryButton, snappy } from "../primitives";
 import type { Screen } from "../state";
@@ -17,6 +19,8 @@ type Props = {
   cowries: number;
   streak: number;
   stamped: number;
+  completed: string[];
+  onOpenLesson: (id: string) => void;
   onGo: (s: Screen) => void;
 };
 
@@ -53,11 +57,14 @@ function DayNightToggle({ night, setNight }: { night: boolean; setNight: (n: boo
   );
 }
 
-export function HomeMap({ night, setNight, statuses, selected, onSelect, cowries, streak, stamped, onGo }: Props) {
+export function HomeMap({ night, setNight, statuses, selected, onSelect, cowries, streak, stamped, completed, onOpenLesson, onGo }: Props) {
   const place = PLACES.find((p) => p.id === selected) ?? PLACES[0];
   const status = statuses[place.id] ?? place.status;
   const guide = guideById(place.guide);
   const tale = TALES[place.culture];
+  const road = ROADS.find((r) => r.place === place.id);
+  const next = road ? nextLesson(road.id, completed) : null;
+  const roadCount = road ? lessonsForRoad(road.id).filter((l) => completed.includes(l.id)).length : 0;
 
   const fg = night ? "text-cream" : "text-ink";
   const pill = night ? "border-cream/40 text-cream" : "border-ink bg-paper text-ink";
@@ -166,7 +173,7 @@ export function HomeMap({ night, setNight, statuses, selected, onSelect, cowries
                 emblem={<Emblem name={guide.emblem} size={54} disc color={guide.tone.fg} bg={guide.tone.bg} rough={1.6} speckle={false} />}
                 kicker={
                   <Mono className={status === "done" ? "text-forest" : "text-brick"}>
-                    {status === "active" ? (place.id === "osogbo" ? "Today’s road · 2 / 5" : "Next road · 1 / 5") : status === "done" ? "Stamped" : "Open road"}
+                    {status === "done" ? "Stamped" : road ? `${status === "active" ? "Today’s road" : "Open road"} · ${roadCount} / 5` : "Coming later"}
                   </Mono>
                 }
                 meta={<Mono>{place.people}</Mono>}
@@ -174,11 +181,11 @@ export function HomeMap({ night, setNight, statuses, selected, onSelect, cowries
                 sub={`${place.name}, ${place.state}`}
                 text={place.blurb}
                 action={
-                  status === "active" && place.id === "osogbo" ? (
-                    <PrimaryButton onClick={() => onGo("lesson")}>
-                      Start lesson
+                  road && next && status !== "done" ? (
+                    <PrimaryButton onClick={() => onOpenLesson(next.id)}>
+                      {roadCount === 0 ? "Start the road" : `Lesson ${next.n}: ${next.title.join(" ")}`}
                       <span className="flex items-center gap-2.5">
-                        <Mono className="text-gold">+15</Mono>
+                        <Mono className="text-gold">{next.minutes} min</Mono>
                         <KeyCap>
                           <ArrowRight size={18} weight="light" />
                         </KeyCap>
@@ -194,7 +201,7 @@ export function HomeMap({ night, setNight, statuses, selected, onSelect, cowries
                   ) : (
                     <div className="flex h-[58px] items-center gap-3 rounded-[14px] border-[1.5px] border-dashed border-ink/40 px-4 text-[14px] text-muted">
                       <LockSimple size={18} weight="light" />
-                      {status === "active" ? `${guide.name}’s first lesson ships with the ${place.people} release` : "Opens after today’s road"}
+                      {`${place.people} lessons arrive in a later release`}
                     </div>
                   )
                 }

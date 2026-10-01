@@ -7,12 +7,31 @@ import { TabBar } from "../TabBar";
 import { Cowrie, Emblem, Mono, snappy } from "../primitives";
 import type { Screen } from "../state";
 
-export function Me({ guide, cowries, streak, stamps, onGo, onReset }: { guide: GuideId; cowries: number; streak: number; stamps: number; onGo: (s: Screen) => void; onReset: () => void }) {
+export function Me({
+  guide,
+  cowries,
+  streak,
+  stamps,
+  lessons,
+  onAsk,
+  onGo,
+  onReset,
+}: {
+  guide: GuideId;
+  cowries: number;
+  streak: number;
+  stamps: number;
+  lessons: number;
+  onAsk: () => void;
+  onGo: (s: Screen) => void;
+  onReset: () => void;
+}) {
   const g = guideById(guide);
   const stats = [
     { k: "Day streak", v: streak },
     { k: "Cowries", v: cowries },
     { k: "Stamps", v: stamps },
+    { k: "Lessons", v: lessons },
   ];
   return (
     <div className="flex h-full flex-col bg-cream text-ink">
@@ -25,9 +44,9 @@ export function Me({ guide, cowries, streak, stamps, onGo, onReset }: { guide: G
           <span className="t-display block text-[64px]">Your</span>
           <span className="t-serif block text-[62px] text-brick">notebook</span>
         </h1>
-        <dl className="mt-6 grid grid-cols-[1.4fr_1fr_1fr] border-y-2 border-ink">
+        <dl className="mt-6 grid grid-cols-2 border-y-2 border-ink">
           {stats.map((s, i) => (
-            <div key={s.k} className={`py-3.5 ${i ? "border-l border-ink/20 pl-3.5" : ""}`}>
+            <div key={s.k} className={`py-3.5 ${i % 2 ? "border-l border-ink/20 pl-3.5" : ""} ${i > 1 ? "border-t border-ink/20" : ""}`}>
               <dt className="t-mono text-[9.5px] text-muted">{s.k}</dt>
               <dd className="t-display-wide mt-1 text-[38px] tabular-nums">{s.v}</dd>
             </div>
@@ -46,6 +65,18 @@ export function Me({ guide, cowries, streak, stamps, onGo, onReset }: { guide: G
             <Cowrie size={18} /> Try it in today’s lesson
           </span>
         </div>
+
+        <motion.button
+          type="button"
+          onClick={onAsk}
+          whileTap={{ scale: 0.98 }}
+          transition={snappy}
+          className="mt-6 flex w-full items-center gap-3 rounded-[20px] p-3 text-left"
+          style={{ background: g.tone.bg, color: g.tone.fg }}
+        >
+          <Emblem name={g.emblem} size={44} color={g.tone.fg} bg={g.tone.bg} rough={1.4} speckle={false} />
+          <span className="flex-1 text-[15px] font-bold">Talk to {g.name}</span>
+        </motion.button>
 
         <motion.button
           type="button"

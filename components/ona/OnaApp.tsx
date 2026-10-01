@@ -11,6 +11,10 @@ import { Lesson } from "./screens/Lesson";
 import { Stamps } from "./screens/Stamps";
 import { Artifact } from "./screens/Artifact";
 import { Almanac } from "./screens/Almanac";
+import { Entry } from "./screens/Entry";
+import { Chat } from "./screens/Chat";
+import { Learn } from "./screens/Learn";
+import { roadById } from "@/lib/ona/roads";
 import { Me } from "./screens/Me";
 import { spring } from "./primitives";
 
@@ -19,14 +23,15 @@ const JUMP: { id: Screen; label: string }[] = [
   { id: "onboarding", label: "Onboarding" },
   { id: "guides", label: "Guides" },
   { id: "map", label: "Map" },
-  { id: "lesson", label: "Lesson" },
+  { id: "learn", label: "Learn" },
+  { id: "chat", label: "Guide chat" },
   { id: "stamps", label: "Stamps" },
   { id: "artifact", label: "3D object" },
   { id: "almanac", label: "Almanac" },
   { id: "me", label: "Notebook" },
 ];
 
-const STORAGE_KEY = "ona.progress.v1";
+const STORAGE_KEY = "ona.progress.v2";
 
 export function OnaApp({ bare = false }: { bare?: boolean }) {
   const [s, dispatch] = useReducer(reducer, initialState);
@@ -55,13 +60,15 @@ export function OnaApp({ bare = false }: { bare?: boolean }) {
       statuses: s.statuses,
       onboarded: s.onboarded,
       selectedPlace: s.selectedPlace,
+      completed: s.completed,
+      road: s.road,
     };
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
     } catch {
       /* progress just won't persist */
     }
-  }, [s.interests, s.guide, s.lives, s.cowries, s.streak, s.stamps, s.statuses, s.onboarded, s.selectedPlace]);
+  }, [s.interests, s.guide, s.lives, s.cowries, s.streak, s.stamps, s.statuses, s.onboarded, s.selectedPlace, s.completed, s.road]);
   const go = useCallback((screen: Screen) => dispatch({ type: "go", screen }), []);
   const leaveSplash = useCallback(() => dispatch({ type: "go", screen: "onboarding" }), []);
   const clearFlash = useCallback(() => dispatch({ type: "clearStampFlash" }), []);
@@ -98,6 +105,21 @@ export function OnaApp({ bare = false }: { bare?: boolean }) {
           cowries={s.cowries}
           streak={s.streak}
           stamped={s.stamps.length}
+          completed={s.completed}
+          onOpenLesson={(id) => dispatch({ type: "openLesson", id })}
+          onGo={go}
+        />
+      );
+      break;
+    case "learn":
+      view = (
+        <Learn
+          road={s.road}
+          completed={s.completed}
+          stamps={s.stamps}
+          onRoad={(road) => dispatch({ type: "setRoad", road })}
+          onOpen={(id) => dispatch({ type: "openLesson", id })}
+          onAsk={() => dispatch({ type: "openChat", guide: roadById(s.road).guide, from: "learn" })}
           onGo={go}
         />
       );
@@ -105,21 +127,38 @@ export function OnaApp({ bare = false }: { bare?: boolean }) {
     case "lesson":
       view = (
         <Lesson
+          key={s.lessonId ?? "none"}
+          lessonId={s.lessonId}
           lives={s.lives}
           onAnswer={(correct) => dispatch({ type: "answer", correct })}
-          onClose={() => go("map")}
-          onComplete={() => dispatch({ type: "completeLesson" })}
+          onRefill={() => dispatch({ type: "refill" })}
+          onClose={() => go("learn")}
+          onFinish={(id, earned) => dispatch({ type: "finishLesson", id, earned })}
         />
       );
       break;
     case "stamps":
-      view = <Stamps stamps={s.stamps} justStamped={s.justStamped} onClearFlash={clearFlash} onGo={go} />;
+      view = <Stamps stamps={s.stamps} justStamped={s.justStamped} onClearFlash={clearFlash} onOpenEntry={(id) => dispatch({ type: "openEntry", id })} onGo={go} />;
       break;
     case "artifact":
       view = <Artifact onBack={() => go("stamps")} />;
       break;
     case "almanac":
-      view = <Almanac onGo={go} />;
+      view = <Almanac onOpen={(id) => dispatch({ type: "openEntry", id })} onGo={go} />;
+      break;
+    case "entry":
+      view = (
+        <Entry
+          id={s.entryId}
+          onOpen={(id) => dispatch({ type: "openEntry", id })}
+          onAsk={(guide) => dispatch({ type: "openChat", guide, from: "entry" })}
+          onBack={() => go("almanac")}
+          onGo={go}
+        />
+      );
+      break;
+    case "chat":
+      view = <Chat key={s.chatGuide} guide={s.chatGuide} onBack={() => go(s.chatFrom)} />;
       break;
     case "me":
       view = (
@@ -128,6 +167,8 @@ export function OnaApp({ bare = false }: { bare?: boolean }) {
           cowries={s.cowries}
           streak={s.streak}
           stamps={s.stamps.length}
+          lessons={s.completed.length}
+          onAsk={() => dispatch({ type: "openChat", guide: s.guide, from: "me" })}
           onGo={go}
           onReset={() => {
             try {
