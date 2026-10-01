@@ -4,12 +4,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, ArrowUp } from "@phosphor-icons/react";
 import { useEffect, useRef, useState } from "react";
 import { guideById, type GuideId } from "@/lib/ona/data";
-import { offlineAnswer } from "@/lib/ona/guideBrief";
+import { guideAnswer } from "@/lib/ona/guideMind";
 import { Emblem, Mono, snappy, spring } from "../primitives";
 import { SpeakButton } from "../Speak";
 import { sfx } from "@/lib/ona/sound";
 
-type Msg = { role: "user" | "assistant"; content: string; offline?: boolean };
+type Msg = { role: "user" | "assistant"; content: string; offline?: boolean; suggestions?: string[] };
 
 const STARTERS: Record<string, string[]> = {
   esu: ["Are you the devil?", "Why the crossroads?", "Tell me the cap story"],
@@ -32,6 +32,19 @@ export function Chat({ guide, onBack }: { guide: GuideId; onBack: () => void }) 
 
   useEffect(() => end.current?.scrollIntoView({ behavior: "smooth", block: "end" }), [msgs, busy]);
 
+  const seen = useRef<string[]>([]);
+
+  /** Answer from the app's own almanac, lessons and festivals. Always available. */
+  const answerLocally = async (next: Msg[], q: string) => {
+    setBusy(true);
+    await new Promise((r) => window.setTimeout(r, 450 + Math.min(900, q.length * 12)));
+    const r = guideAnswer(guide, q, seen.current);
+    seen.current = [...seen.current, ...r.used].slice(-40);
+    sfx.cowrie();
+    setMsgs([...next, { role: "assistant", content: r.text, offline: true, suggestions: r.suggestions }]);
+    setBusy(false);
+  };
+
   const send = async (text: string) => {
     const q = text.trim().slice(0, 600);
     if (!q || busy) return;
@@ -40,10 +53,7 @@ export function Chat({ guide, onBack }: { guide: GuideId; onBack: () => void }) 
     setMsgs(next);
     setDraft("");
     sfx.tap();
-    if (offline) {
-      setMsgs([...next, { role: "assistant", content: offlineAnswer(guide, q), offline: true }]);
-      return;
-    }
+    if (offline) return answerLocally(next, q);
     setBusy(true);
     try {
       const res = await fetch("/api/guide", {
@@ -52,25 +62,20 @@ export function Chat({ guide, onBack }: { guide: GuideId; onBack: () => void }) 
         // The opening greeting is UI copy, not a model turn: send only the real exchange.
         body: JSON.stringify({ guide, messages: next.slice(1).map(({ role, content }) => ({ role, content })) }),
       });
-      const data = (await res.json()) as { reply?: string; error?: string };
+      const data = (await res.json().catch(() => ({}))) as { reply?: string; error?: string };
       if (data.reply) {
         sfx.cowrie();
         setMsgs([...next, { role: "assistant", content: data.reply }]);
-      } else if (data.error === "no_key") {
-        setOffline(true);
-        sfx.cowrie();
-        setMsgs([...next, { role: "assistant", content: offlineAnswer(guide, q), offline: true }]);
-      } else {
-        setError(data.error === "busy" ? `${g.name} is speaking with many travellers. Try again in a moment.` : "That message did not reach the guide. Try again.");
-        setMsgs(msgs);
-        setDraft(q);
+        setBusy(false);
+        return;
       }
-    } catch {
-      setError("You seem to be offline. Check your connection and try again.");
-      setMsgs(msgs);
-      setDraft(q);
-    } finally {
+      // No live model (no key, busy, or down): the guide answers from the almanac instead.
+      if (data.error === "no_key") setOffline(true);
       setBusy(false);
+      return answerLocally(next, q);
+    } catch {
+      setBusy(false);
+      return answerLocally(next, q);
     }
   };
 
@@ -122,7 +127,7 @@ export function Chat({ guide, onBack }: { guide: GuideId; onBack: () => void }) 
                     <SpeakButton text={m.content} guide={guide} label={`${g.name}’s reply`} size={26} />
                   </div>
                 )}
-                {m.offline && <Mono className="mt-1.5 block text-[9px] text-muted">From the almanac · live chat needs an API key</Mono>}
+                {m.offline && <Mono className="mt-1.5 block text-[9px] text-muted">From the almanac</Mono>}
               </div>
             </motion.div>
           ))}
@@ -137,6 +142,15 @@ export function Chat({ guide, onBack }: { guide: GuideId; onBack: () => void }) 
             </motion.div>
           )}
         </AnimatePresence>
+        {!busy && msgs.length > 1 && msgs.at(-1)?.suggestions && (
+          <div className="mt-1 flex flex-wrap gap-2 pl-10">
+            {msgs.at(-1)!.suggestions!.map((x) => (
+              <motion.button key={x} type="button" whileTap={{ scale: 0.96 }} transition={snappy} onClick={() => send(x)} className="rounded-full bg-paper px-3 py-1.5 text-[12.5px] font-semibold ring-1 ring-ink/20">
+                {x}
+              </motion.button>
+            ))}
+          </div>
+        )}
         {msgs.length === 1 && (
           <div className="mt-2 flex flex-wrap gap-2">
             {(STARTERS[guide] ?? STARTERS.keeper).map((s) => (

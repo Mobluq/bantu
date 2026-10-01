@@ -25,26 +25,3 @@ export function guideFacts(id: GuideId): string {
   }
   return lines.join("\n");
 }
-
-/** Offline answer: the almanac row whose label or text best matches the question. */
-export function offlineAnswer(id: GuideId, question: string): string {
-  const fold = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
-  const g = guideById(id);
-  const entry = ENTRIES.find((e) => e.id === id);
-  const q = fold(question);
-  const words = q.split(/[^a-z0-9]+/).filter((w) => w.length > 3);
-  const rows: [string, string][] = [...(entry?.rows ?? []), ...(entry?.abroad ?? []).map(([k, v]) => [`Abroad, ${k}`, v] as [string, string])];
-  let best: [string, string] | null = null;
-  let score = 0;
-  for (const r of rows) {
-    const t = fold(r.join(" "));
-    const s = words.filter((w) => t.includes(w)).length;
-    if (s > score) {
-      score = s;
-      best = r;
-    }
-  }
-  if (best) return `${best[0]}: ${best[1]}.`;
-  if (entry?.story && /story|tale|why|how/.test(q)) return `${entry.story.title}. ${entry.story.body}`;
-  return `I am ${g.name}, of ${g.domain}. Ask me about my domain, my colours, where I am honoured, or my story.`;
-}
