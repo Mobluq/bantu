@@ -25,7 +25,7 @@ export function Splash({ onDone }: { onDone: () => void }) {
       aria-label="Enter ọ̀nà"
       className="relative flex h-full w-full flex-col bg-cream text-left text-ink"
     >
-      <div className="flex w-full justify-between px-[22px] pt-14">
+      <div className="flex w-full justify-between px-[22px] pt-safe">
         <Mono>Nº 001 — First edition</Mono>
         <Mono>9.08°N · 8.68°E</Mono>
       </div>
@@ -54,7 +54,7 @@ export function Splash({ onDone }: { onDone: () => void }) {
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ ...spring, delay: 0.4 }}
-        className="t-display-wide mt-4 block pl-[18px] text-[min(150px,38.5cqw)] leading-[0.8] text-brick"
+        className="t-display-wide mt-4 block pl-[18px] text-[min(150px,38.5cqw,17.4cqh)] leading-[0.8] text-brick"
       >
         ọ̀nà
       </motion.span>

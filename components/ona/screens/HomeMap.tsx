@@ -116,7 +116,7 @@ export function HomeMap({ night, setNight, statuses, selected, onSelect, cowries
       </AnimatePresence>
 
       <div className="no-scrollbar relative flex min-h-0 flex-1 flex-col overflow-y-auto">
-      <header className="relative flex items-center justify-between px-4 pt-[52px]">
+      <header className="relative flex items-center justify-between px-4 pt-safe">
         <span className="flex items-center gap-2">
           <Emblem name="esu" size={24} color={night ? "var(--color-gold)" : "var(--color-brick)"} bg="transparent" rough={1.2} speckle={false} />
           <span className="t-display-wide text-[27px] leading-none">ọ̀nà</span>
@@ -145,8 +145,8 @@ export function HomeMap({ night, setNight, statuses, selected, onSelect, cowries
 
       <div className="relative flex items-end justify-between px-4 pt-4">
         <h1 className="leading-[0.86]">
-          <span className="t-display block text-[min(50px,13cqw)]">Your</span>
-          <span className={`t-serif block text-[min(50px,13cqw)] leading-[0.95] ${night ? "text-gold" : "text-brick"}`}>Nigeria</span>
+          <span className="t-display block text-[min(50px,13cqw,5.8cqh)]">Your</span>
+          <span className={`t-serif block text-[min(50px,13cqw,5.8cqh)] leading-[0.95] ${night ? "text-gold" : "text-brick"}`}>Nigeria</span>
         </h1>
         <div className="flex flex-col items-end gap-2.5 pb-1">
           <DayNightToggle night={night} setNight={setNight} />
@@ -156,7 +156,7 @@ export function HomeMap({ night, setNight, statuses, selected, onSelect, cowries
         </div>
       </div>
 
-      <div className="relative min-h-[210px] flex-1">
+      <div className="relative min-h-[min(210px,24cqh)] flex-1">
         <div className="absolute inset-0 px-3 pb-2 pt-3">
           <NigeriaMap fill night={night} statuses={statuses} selected={selected} onSelect={onSelect} />
         </div>
@@ -298,8 +298,8 @@ function SheetBody({
           <div className={`t-serif mt-0.5 text-[16px] ${night ? "text-cream/70" : "text-muted"}`}>{sub}</div>
         </div>
       </div>
-      <p className="mt-3 min-h-[40px] text-[14px] leading-[1.42]">{text}</p>
-      <div className="mt-3.5">{action}</div>
+      <p className="mt-2.5 line-clamp-3 text-[14px] leading-[1.42] [@container(max-height:700px)]:line-clamp-2">{text}</p>
+      <div className="mt-3">{action}</div>
       {ask && (
         <button type="button" onClick={ask.go} className="mx-auto mt-2 flex min-h-10 items-center gap-1.5 text-[13.5px] font-semibold underline underline-offset-[3px]">
           <ChatCircleDots size={16} weight="light" />

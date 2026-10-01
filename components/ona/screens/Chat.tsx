@@ -94,7 +94,7 @@ export function Chat({ guide, onBack, initial, onAsked, about }: { guide: GuideI
   return (
     <div className="relative flex h-full flex-col bg-cream text-ink">
       <header
-        className={`relative flex items-center gap-3 pb-4 pl-1.5 pr-4 pt-12 ${dark ? "ht-light text-cream" : "border-b border-ink/15"}`}
+        className={`relative flex items-center gap-3 pb-4 pl-1.5 pr-4 pt-safe ${dark ? "ht-light text-cream" : "border-b border-ink/15"}`}
         style={{ background: g.tone.bg }}
       >
         <button type="button" onClick={onBack} aria-label="Back" className="flex size-11 items-center justify-center" style={{ color: dark ? g.tone.fg : "var(--color-ink)" }}>

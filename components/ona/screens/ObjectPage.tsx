@@ -46,7 +46,7 @@ export function ObjectPage({ id, tour, onBack, onObject, onVertical, onAsk, onEn
       <div className="no-scrollbar flex-1 overflow-y-auto" key={o.id}>
         {/* Hero: the object as a printed stamp on its colour */}
         <section className={`torn-bottom relative overflow-hidden pb-10 ${dark ? "ht-light" : "ht"}`} style={{ background: o.tone.bg, color: o.tone.fg }}>
-          <div className="relative flex items-center justify-between pl-1.5 pr-3.5 pt-12">
+          <div className="relative flex items-center justify-between pl-1.5 pr-3.5 pt-safe">
             <button type="button" onClick={onBack} aria-label="Back" className="flex size-11 items-center justify-center">
               <ArrowLeft size={22} weight="light" />
             </button>
@@ -55,7 +55,7 @@ export function ObjectPage({ id, tour, onBack, onObject, onVertical, onAsk, onEn
           <div className="relative flex items-end justify-between gap-2 px-5 pt-2">
             <div className="min-w-0">
               <Mono className="block text-[10px] opacity-80">Label number</Mono>
-              <div className="t-display-wide text-[min(64px,16cqw)] leading-[0.85] tabular-nums">{o.code}</div>
+              <div className="t-display-wide text-[min(64px,16cqw,7.4cqh)] leading-[0.85] tabular-nums">{o.code}</div>
             </div>
             <motion.div initial={{ rotate: -14, scale: 0.8, opacity: 0 }} animate={{ rotate: -6, scale: 1, opacity: 1 }} transition={spring} className="-mb-4 -mr-3 shrink-0">
               <Emblem name={o.emblem} size={150} color={o.tone.fg} bg={o.tone.bg} rough={2.4} />
@@ -64,7 +64,7 @@ export function ObjectPage({ id, tour, onBack, onObject, onVertical, onAsk, onEn
         </section>
 
         <div className="px-5 pt-3">
-          <h1 className="t-display text-[min(46px,12cqw)] leading-[0.92]">{o.title}</h1>
+          <h1 className="t-display text-[min(46px,12cqw,5.3cqh)] leading-[0.92]">{o.title}</h1>
           {o.local && <p className="t-serif mt-1 text-[22px] text-brick">{o.local}</p>}
           <dl className="mt-4 border-t-2 border-ink">
             {(

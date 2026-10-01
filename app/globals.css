@@ -171,5 +171,10 @@ body {
 
 /* The app frame is a size container so headlines scale with the phone, not the window. */
 .ona-root {
-  container-type: inline-size;
+  container-type: size;
+}
+
+/* Top padding that follows the real safe area: none inside a browser tab, the status bar in a home-screen app. */
+@utility pt-safe {
+  padding-top: calc(env(safe-area-inset-top, 0px) + 22px);
 }

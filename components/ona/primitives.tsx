@@ -172,16 +172,18 @@ export function KeyCap({ tone = "ink", children }: { tone?: "ink" | "gold" | "ni
 /** Guide speech bubble: paper, ink hairline, square corner at the speaker. */
 export function Bubble({ who, whoClass = "text-brick", action, children, dark = false }: { who: string; whoClass?: string; action?: ReactNode; children: ReactNode; dark?: boolean }) {
   return (
-    <div
-      className={`flex-1 rounded-[4px_20px_20px_20px] px-[14px] pb-3 pt-[11px] ${
-        dark ? "border border-cream/25 bg-paper/[0.08] text-cream" : "border-[1.5px] border-ink bg-paper text-ink"
-      }`}
-    >
-      <div className="mb-1 flex items-center justify-between">
-        <span className={`text-[13.5px] font-bold ${whoClass}`}>{who}</span>
-        {action}
+    <div className={`min-w-0 flex-1 rounded-[6px_24px_24px_24px] p-[5px] ${dark ? "bg-cream/[0.06] ring-1 ring-cream/15" : "bg-ink/[0.04] ring-1 ring-ink/10"}`}>
+      <div
+        className={`rounded-[3px_19px_19px_19px] px-[14px] pb-3 pt-[11px] ${
+          dark ? "bg-paper/[0.06] text-cream shadow-[inset_0_1px_0_rgb(255_255_255_/_0.08)]" : "bg-paper text-ink shadow-[inset_0_1px_0_rgb(255_255_255_/_0.9),0_10px_24px_-18px_rgb(30_20_12_/_0.35)]"
+        }`}
+      >
+        <div className="mb-1 flex items-center justify-between gap-2">
+          <span className={`text-[13.5px] font-bold ${whoClass}`}>{who}</span>
+          {action}
+        </div>
+        <div className="text-[15px] leading-[1.45]">{children}</div>
       </div>
-      <div className="text-[15px] leading-[1.42]">{children}</div>
     </div>
   );
 }

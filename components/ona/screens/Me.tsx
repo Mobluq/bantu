@@ -71,14 +71,14 @@ export function Me({
   ];
   return (
     <div className="flex h-full flex-col bg-cream text-ink">
-      <div className="no-scrollbar flex-1 overflow-y-auto px-5 pb-10 pt-14">
+      <div className="no-scrollbar flex-1 overflow-y-auto px-5 pb-10 pt-safe">
         <div className="flex flex-wrap justify-between gap-x-3 gap-y-1">
           <Mono>Traveller’s notebook</Mono>
           <Mono className="text-brick">Walking with {g.name}</Mono>
         </div>
         <h1 className="mt-3 leading-[0.86]">
-          <span className="t-display block text-[min(64px,17cqw)]">Your</span>
-          <span className="t-serif block text-[min(62px,16.5cqw)] text-brick">notebook</span>
+          <span className="t-display block text-[min(64px,17cqw,7.4cqh)]">Your</span>
+          <span className="t-serif block text-[min(62px,16.5cqw,7.2cqh)] text-brick">notebook</span>
         </h1>
         <dl className="mt-6 grid grid-cols-2 border-y-2 border-ink">
           {stats.map((s, i) => (

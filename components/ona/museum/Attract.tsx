@@ -37,8 +37,8 @@ export function Attract({ open, onStart }: { open: boolean; onStart: () => void 
             <Mono>ọ̀nà</Mono>
           </div>
           <h1 className="mt-4 px-6 leading-[0.84]">
-            <span className="t-display block text-[min(72px,18cqw)]">{EXHIBITION.title.split(" ").slice(0, 2).join(" ")}</span>
-            <span className="t-serif block text-[min(72px,18cqw)]">{EXHIBITION.title.split(" ").slice(2).join(" ")}</span>
+            <span className="t-display block text-[min(72px,18cqw,8.4cqh)]">{EXHIBITION.title.split(" ").slice(0, 2).join(" ")}</span>
+            <span className="t-serif block text-[min(72px,18cqw,8.4cqh)]">{EXHIBITION.title.split(" ").slice(2).join(" ")}</span>
           </h1>
           <div className="relative flex flex-1 items-center justify-center">
             <AnimatePresence mode="wait">

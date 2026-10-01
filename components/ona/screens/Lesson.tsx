@@ -107,8 +107,8 @@ export function Lesson({ lessonId, lives, lifeAt, completed, saved, onToggleSave
       <div className="graph-light ht-light relative flex h-full flex-col bg-forest px-6 pb-[max(env(safe-area-inset-bottom),28px)] pt-16 text-cream">
         <Mono className="text-gold">{road.people} · Lesson {String(lesson.n).padStart(2, "0")} / 05</Mono>
         <motion.h1 initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={spring} className="mt-4 leading-[0.86]">
-          <span className="t-display block text-[min(68px,17.4cqw)]">Ó dáa</span>
-          <span className="t-serif block text-[min(64px,16.4cqw)] text-gold">gan-an.</span>
+          <span className="t-display block text-[min(68px,17.4cqw,7.9cqh)]">Ó dáa</span>
+          <span className="t-serif block text-[min(64px,16.4cqw,7.4cqh)] text-gold">gan-an.</span>
         </motion.h1>
         <p className="mt-4 max-w-[30ch] text-[15px] leading-[1.45] text-cream/85">
           You finished “{lesson.title.join(" ")}” with {mistakes === 0 ? "no mistakes" : `${mistakes} slip${mistakes > 1 ? "s" : ""}`}.
@@ -141,7 +141,7 @@ export function Lesson({ lessonId, lives, lifeAt, completed, saved, onToggleSave
 
   return (
     <div className="relative flex h-full flex-col bg-cream text-ink">
-      <div className="flex items-center gap-2.5 pl-1.5 pr-4 pt-12">
+      <div className="flex items-center gap-2.5 pl-1.5 pr-4 pt-safe">
         <button type="button" onClick={onClose} aria-label="Close lesson" className="flex size-11 shrink-0 items-center justify-center">
           <X size={20} weight="light" />
         </button>
@@ -181,8 +181,8 @@ export function Lesson({ lessonId, lives, lifeAt, completed, saved, onToggleSave
           >
             {i === 0 && (
               <h1 className="mb-4 leading-[0.86]">
-                <span className="t-display text-[min(52px,13.3cqw)]">{lesson.title[0]} </span>
-                <span className="t-serif text-[min(54px,13.8cqw)] text-brick">{lesson.title[1]}</span>
+                <span className="t-display text-[min(52px,13.3cqw,6.0cqh)]">{lesson.title[0]} </span>
+                <span className="t-serif text-[min(54px,13.8cqw,6.3cqh)] text-brick">{lesson.title[1]}</span>
               </h1>
             )}
             <StepView

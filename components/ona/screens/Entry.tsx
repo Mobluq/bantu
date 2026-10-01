@@ -53,7 +53,7 @@ export function Entry({ id, onOpen, onAsk, onBack, onGo }: { id: string; onOpen:
           <motion.div initial={{ rotate: -10, opacity: 0 }} animate={{ rotate: 8, opacity: 1 }} transition={spring} className="absolute -right-20 top-[92px]">
             <Emblem name={e.emblem} size={220} color={e.tone.fg} bg={e.tone.bg} rough={2.8} />
           </motion.div>
-          <div className="relative flex items-center justify-between pl-1.5 pr-3.5 pt-12">
+          <div className="relative flex items-center justify-between pl-1.5 pr-3.5 pt-safe">
             <button type="button" onClick={onBack} aria-label="Back" className="flex size-11 items-center justify-center">
               <ArrowLeft size={22} weight="light" />
             </button>
@@ -61,7 +61,7 @@ export function Entry({ id, onOpen, onAsk, onBack, onGo }: { id: string; onOpen:
           </div>
           <div className="absolute bottom-8 left-5">
             <Mono className="mb-0.5 block text-[10px]">Entry</Mono>
-            <div className="t-serif text-[min(80px,20cqw)] leading-[0.8]">Nº {e.number}</div>
+            <div className="t-serif text-[min(80px,20cqw,9.3cqh)] leading-[0.8]">Nº {e.number}</div>
           </div>
         </section>
 
@@ -71,7 +71,7 @@ export function Entry({ id, onOpen, onAsk, onBack, onGo }: { id: string; onOpen:
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={spring}>
             <div className="px-5 pt-4">
               <div className="flex items-start justify-between gap-3">
-                <h1 className="t-display min-w-0 text-[min(84px,20cqw)]">{e.name}</h1>
+                <h1 className="t-display min-w-0 text-[min(84px,20cqw,9.8cqh)]">{e.name}</h1>
                 <SpeakButton
                   className="mt-3 shrink-0"
                   text={`${e.full}. ${e.rows.map(([k, v]) => `${k}: ${v}`).join(". ")}`}
@@ -138,7 +138,7 @@ export function Entry({ id, onOpen, onAsk, onBack, onGo }: { id: string; onOpen:
                 </div>
                 <h2 className="t-display mt-2 text-[min(40px,10.5cqw)]">{e.story.title}</h2>
                 <p className="mt-3 text-[15.5px] leading-[1.55]">
-                  <span className="t-serif float-left mr-2 mt-1.5 text-[min(66px,16.9cqw)] leading-[0.78] text-brick">{dropCap(e.story.body)[0]}</span>
+                  <span className="t-serif float-left mr-2 mt-1.5 text-[min(66px,16.9cqw,7.7cqh)] leading-[0.78] text-brick">{dropCap(e.story.body)[0]}</span>
                   {dropCap(e.story.body)[1]}
                 </p>
                 {e.story.moral && <p className="t-serif mt-3 text-[20px] leading-[1.3]">{e.story.moral}</p>}

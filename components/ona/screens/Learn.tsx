@@ -50,7 +50,7 @@ export function Learn({ road, completed, stamps, onRoad, onOpen, onAsk, onGo }: 
   return (
     <div className="graph flex h-full flex-col bg-cream text-ink">
       <div className="no-scrollbar flex-1 overflow-y-auto">
-        <header className="px-5 pt-14">
+        <header className="px-5 pt-safe">
           <div className="flex items-center justify-between">
             <Mono className="text-brick">Chapter {String(chapter).padStart(2, "0")} / {String(ROADS.length).padStart(2, "0")}</Mono>
             <Mono className="tabular-nums">{doneCount} / {lessons.length} lessons</Mono>
@@ -88,8 +88,8 @@ export function Learn({ road, completed, stamps, onRoad, onOpen, onAsk, onGo }: 
           <AnimatePresence mode="wait" initial={false}>
             <motion.div key={road} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0, transition: spring }} exit={{ opacity: 0, transition: { duration: 0.1 } }}>
               <h1 className="mt-6 leading-[0.86]">
-                <span className="t-display block text-[min(56px,14.4cqw)]">{first}</span>
-                <span className="t-serif block text-[min(56px,14.4cqw)]" style={{ color: g.tone.bg === "var(--color-ink)" ? "var(--color-brick)" : g.tone.bg }}>
+                <span className="t-display block text-[min(56px,14.4cqw,6.5cqh)]">{first}</span>
+                <span className="t-serif block text-[min(56px,14.4cqw,6.5cqh)]" style={{ color: g.tone.bg === "var(--color-ink)" ? "var(--color-brick)" : g.tone.bg }}>
                   {rest.join(" ")}
                 </span>
               </h1>

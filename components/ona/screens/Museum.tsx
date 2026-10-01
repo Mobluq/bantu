@@ -29,14 +29,14 @@ export function Museum({ seen, tour, onObject, onVertical, onTour, onGo }: Props
   return (
     <div className="relative flex h-full flex-col bg-cream text-ink">
       <div className="no-scrollbar flex-1 overflow-y-auto">
-        <header className="ht-light relative overflow-hidden bg-ink px-5 pb-6 pt-14 text-cream">
+        <header className="ht-light relative overflow-hidden bg-ink px-5 pb-6 pt-safe text-cream">
           <div className="flex flex-wrap justify-between gap-x-3 gap-y-1 text-gold">
             <Mono>{EXHIBITION.venue}</Mono>
             <Mono>{OBJECTS.length} objects · {GALLERIES.length} rooms</Mono>
           </div>
           <h1 className="mt-3 leading-[0.84]">
-            <span className="t-display block text-[min(66px,17cqw)]">Roads of</span>
-            <span className="t-serif block text-[min(66px,17cqw)] text-gold">Nigeria</span>
+            <span className="t-display block text-[min(66px,17cqw,7.7cqh)]">Roads of</span>
+            <span className="t-serif block text-[min(66px,17cqw,7.7cqh)] text-gold">Nigeria</span>
           </h1>
           <p className="mt-3 max-w-[40ch] text-[14px] leading-[1.45] text-cream/80">{EXHIBITION.intro}</p>
 

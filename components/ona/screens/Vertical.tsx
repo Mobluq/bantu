@@ -31,7 +31,7 @@ export function Vertical({ id, seen, onBack, onObject, onVertical, onCalendar, o
   return (
     <div className="flex h-full flex-col bg-cream text-ink">
       <div className="no-scrollbar flex-1 overflow-y-auto">
-        <header className="relative overflow-hidden px-5 pb-6 pt-12" style={{ background: v.tone.bg, color: v.tone.fg }}>
+        <header className="relative overflow-hidden px-5 pb-6 pt-safe" style={{ background: v.tone.bg, color: v.tone.fg }}>
           <span className="pointer-events-none absolute -right-12 -top-4 opacity-90">
             <Emblem name={v.emblem} size={170} color={v.tone.fg} bg={v.tone.bg} rough={2.2} />
           </span>
@@ -39,7 +39,7 @@ export function Vertical({ id, seen, onBack, onObject, onVertical, onCalendar, o
             <ArrowLeft size={22} weight="light" />
           </button>
           <Mono className="relative mt-2 block text-[10px] opacity-80">Explore by subject</Mono>
-          <h1 className="t-display relative mt-1 max-w-[9ch] text-[min(58px,15cqw)] leading-[0.88]">{v.name}</h1>
+          <h1 className="t-display relative mt-1 max-w-[9ch] text-[min(58px,15cqw,6.7cqh)] leading-[0.88]">{v.name}</h1>
           <p className="t-serif relative mt-2 max-w-[26ch] pr-16 text-[20px] leading-[1.2] opacity-90">{v.line}</p>
         </header>
 

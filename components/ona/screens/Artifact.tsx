@@ -129,7 +129,7 @@ export function Artifact({ onBack }: { onBack: () => void }) {
 
   return (
     <div className="relative flex h-full flex-col overflow-hidden bg-[radial-gradient(120%_70%_at_50%_42%,#4A3220_0%,#24180F_55%,var(--color-ink)_100%)] text-cream">
-      <div className="flex shrink-0 items-center justify-between pl-1.5 pr-3.5 pt-12">
+      <div className="flex shrink-0 items-center justify-between pl-1.5 pr-3.5 pt-safe">
         <button type="button" onClick={onBack} aria-label="Back" className="flex size-11 items-center justify-center">
           <ArrowLeft size={22} weight="light" />
         </button>
@@ -137,8 +137,8 @@ export function Artifact({ onBack }: { onBack: () => void }) {
       </div>
       <div className="shrink-0">
         <h1 className="mx-5 mt-1.5 leading-[0.86]">
-          <span className="t-display text-[min(60px,15cqw)]">Ifẹ̀ </span>
-          <span className="t-serif text-[min(62px,15.5cqw)] text-gold">head</span>
+          <span className="t-display text-[min(60px,15cqw,7.0cqh)]">Ifẹ̀ </span>
+          <span className="t-serif text-[min(62px,15.5cqw,7.2cqh)] text-gold">head</span>
         </h1>
         <div className="t-mono mx-5 mt-2.5 text-[10px] leading-[1.7] text-cream/70 [@media(max-height:640px)]:hidden">
           Copper alloy · c. 12th–15th century

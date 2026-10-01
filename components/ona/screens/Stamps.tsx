@@ -81,18 +81,18 @@ export function Stamps({
   return (
     <div className="ht-light relative flex h-full flex-col overflow-hidden bg-forest text-cream">
       <div className="no-scrollbar flex-1 overflow-y-auto">
-        <header className="relative px-5 pt-14">
+        <header className="relative px-5 pt-safe">
           <div className="flex justify-between text-gold">
             <Mono>Passport · {ROADS.length} roads open</Mono>
             <Mono>p. 01</Mono>
           </div>
           <div className="mt-2.5 flex items-end justify-between">
             <h1 className="leading-[0.84]">
-              <span className="t-display block text-[min(68px,17.4cqw)]">Stamp</span>
-              <span className="t-serif block text-[min(66px,16.9cqw)] text-gold">book</span>
+              <span className="t-display block text-[min(68px,17.4cqw,7.9cqh)]">Stamp</span>
+              <span className="t-serif block text-[min(66px,16.9cqw,7.7cqh)] text-gold">book</span>
             </h1>
             <div className="pb-1.5 text-right">
-              <motion.div key={stamps.length} initial={{ scale: 1.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={spring} className="t-display-wide text-[min(44px,11.3cqw)] tabular-nums text-gold">
+              <motion.div key={stamps.length} initial={{ scale: 1.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={spring} className="t-display-wide text-[min(44px,11.3cqw,5.1cqh)] tabular-nums text-gold">
                 {String(stamps.length).padStart(2, "0")}
               </motion.div>
               <Mono className="text-[9.5px]">of {TOTAL_PLACES} places</Mono>

@@ -28,14 +28,14 @@ export function TourScreen({ id, progress, seen, onBack, onStart, onEnd }: Props
   return (
     <div className="flex h-full flex-col bg-cream text-ink">
       <div className="no-scrollbar flex-1 overflow-y-auto">
-        <header className="ht-light relative overflow-hidden px-5 pb-6 pt-12" style={{ background: t.tone.bg, color: t.tone.fg }}>
+        <header className="ht-light relative overflow-hidden px-5 pb-6 pt-safe" style={{ background: t.tone.bg, color: t.tone.fg }}>
           <button type="button" onClick={onBack} aria-label="Back" className="-ml-3.5 flex size-11 items-center justify-center">
             <ArrowLeft size={22} weight="light" />
           </button>
           <Mono className="mt-2 block text-[10px] opacity-80">
             Guided tour · {t.minutes} min · {t.stops.length} stops · {t.audience}
           </Mono>
-          <h1 className="t-display mt-1 text-[min(58px,15cqw)] leading-[0.88]">{t.name}</h1>
+          <h1 className="t-display mt-1 text-[min(58px,15cqw,6.7cqh)] leading-[0.88]">{t.name}</h1>
           <p className="mt-2 max-w-[40ch] text-[14.5px] leading-[1.45] opacity-90">{t.intro}</p>
         </header>
 

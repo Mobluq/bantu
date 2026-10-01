@@ -34,14 +34,14 @@ export function Almanac({
   return (
     <div className="flex h-full flex-col bg-cream text-ink">
       <div className="no-scrollbar flex-1 overflow-y-auto">
-        <header className="ht-light relative overflow-hidden bg-ink px-5 pb-6 pt-14 text-cream">
+        <header className="ht-light relative overflow-hidden bg-ink px-5 pb-6 pt-safe text-cream">
           <div className="absolute right-4 top-10">
             <Emblem name="keeper" size={80} color="var(--color-gold)" bg="var(--color-ink)" rough={1.8} />
           </div>
           <Mono className="relative text-gold">The Almanac · {ENTRIES.length} entries</Mono>
           <h1 className="relative mt-3 leading-[0.86]">
-            <span className="t-display block text-[min(56px,14.4cqw)]">Gods, heroes</span>
-            <span className="t-serif block text-[min(54px,13.8cqw)] text-gold">&amp; feast days</span>
+            <span className="t-display block text-[min(56px,14.4cqw,6.5cqh)]">Gods, heroes</span>
+            <span className="t-serif block text-[min(54px,13.8cqw,6.3cqh)] text-gold">&amp; feast days</span>
           </h1>
           <div role="tablist" aria-label="Almanac view" className="relative mt-5 flex rounded-full p-[3px] ring-1 ring-cream/30">
             {(

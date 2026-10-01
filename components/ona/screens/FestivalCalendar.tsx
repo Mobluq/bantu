@@ -206,7 +206,7 @@ export function FestivalCalendar() {
                 transition={snappy}
               >
                 <h2 id="month-h" className="mt-3 leading-[0.84]">
-                  <span className="t-display block text-[min(76px,19cqw)]">{MONTHS[month - 1]}</span>
+                  <span className="t-display block text-[min(76px,19cqw,8.8cqh)]">{MONTHS[month - 1]}</span>
                 </h2>
                 <p className="mt-2">
                   <span className="t-serif text-[22px] text-gold">{season.name}</span>
