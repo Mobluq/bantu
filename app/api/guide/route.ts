@@ -94,7 +94,7 @@ export async function POST(req: Request) {
     if (error instanceof Anthropic.AuthenticationError) return Response.json({ error: "no_key" }, { status: 503 });
     if (error instanceof Anthropic.APIError) {
       console.error("guide chat upstream error", live.gateway ? "gateway" : "anthropic", error.status, error.message.slice(0, 300));
-      return Response.json({ error: "upstream" }, { status: 502 });
+      return Response.json({ error: "upstream", source: live.gateway ? "gateway" : "anthropic", status: error.status ?? null, detail: error.message.slice(0, 200) }, { status: 502 });
     }
     return Response.json({ error: "unknown" }, { status: 500 });
   }
