@@ -3,7 +3,8 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { MagnifyingGlass, X } from "@phosphor-icons/react";
 import { useMemo, useState } from "react";
-import { CATEGORIES, ENTRIES, FESTIVALS, MONTHS, type Category } from "@/lib/ona/almanac";
+import { CATEGORIES, ENTRIES, type Category } from "@/lib/ona/almanac";
+import { FestivalCalendar } from "./FestivalCalendar";
 import { TabBar } from "../TabBar";
 import { Emblem, Mono, snappy, spring } from "../primitives";
 import type { Screen } from "../state";
@@ -11,8 +12,16 @@ import type { Screen } from "../state";
 /** Strip tone marks and underdots so "osun" finds "Ọ̀ṣun". */
 const fold = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 
-export function Almanac({ onOpen, onGo }: { onOpen: (id: string) => void; onGo: (s: Screen) => void }) {
-  const [tab, setTab] = useState<"entries" | "calendar">("entries");
+export function Almanac({
+  onOpen,
+  onGo,
+  initialTab = "entries",
+}: {
+  onOpen: (id: string) => void;
+  onGo: (s: Screen) => void;
+  initialTab?: "entries" | "calendar";
+}) {
+  const [tab, setTab] = useState<"entries" | "calendar">(initialTab);
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<Category | null>(null);
 
@@ -21,9 +30,6 @@ export function Almanac({ onOpen, onGo }: { onOpen: (id: string) => void; onGo: 
     return ENTRIES.filter((e) => (!cat || e.category === cat) && (!f || fold(`${e.name} ${e.full} ${e.people} ${e.rows.map((r) => r[1]).join(" ")}`).includes(f)));
   }, [q, cat]);
 
-  const thisMonth = 10; // the prototype's calendar opens on October
-  const dated = FESTIVALS.filter((f) => f.months.length > 0);
-  const moving = FESTIVALS.filter((f) => f.months.length === 0);
 
   return (
     <div className="flex h-full flex-col bg-cream text-ink">
@@ -34,8 +40,8 @@ export function Almanac({ onOpen, onGo }: { onOpen: (id: string) => void; onGo: 
           </div>
           <Mono className="relative text-gold">The Almanac · {ENTRIES.length} entries</Mono>
           <h1 className="relative mt-3 leading-[0.86]">
-            <span className="t-display block text-[56px]">Gods, heroes</span>
-            <span className="t-serif block text-[54px] text-gold">&amp; feast days</span>
+            <span className="t-display block text-[min(56px,14.4cqw)]">Gods, heroes</span>
+            <span className="t-serif block text-[min(54px,13.8cqw)] text-gold">&amp; feast days</span>
           </h1>
           <div role="tablist" aria-label="Almanac view" className="relative mt-5 flex rounded-full p-[3px] ring-1 ring-cream/30">
             {(
@@ -126,49 +132,13 @@ export function Almanac({ onOpen, onGo }: { onOpen: (id: string) => void; onGo: 
               )}
             </motion.div>
           ) : (
-            <motion.div key="calendar" initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { duration: 0.25 } }} exit={{ opacity: 0, transition: { duration: 0.1 } }} className="px-5 pb-8 pt-5">
-              <p className="text-[14px] leading-[1.45] text-muted">Typical windows. Several dates are set locally each year, and Sallah festivals follow the lunar calendar.</p>
-              {MONTHS.map((m, idx) => {
-                const fs = dated.filter((f) => f.months[0] === idx + 1);
-                if (fs.length === 0) return null;
-                return (
-                  <section key={m} className="mt-5">
-                    <div className="flex items-center gap-2">
-                      <span className="t-display text-[30px]">{m}</span>
-                      {idx + 1 === thisMonth && <span className="rounded-full bg-brick px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-cream">This month</span>}
-                    </div>
-                    {fs.map((f) => (
-                      <FestivalRow key={`${m}-${f.id}`} f={f} />
-                    ))}
-                  </section>
-                );
-              })}
-              <section className="mt-6">
-                <span className="t-display text-[30px]">Moving dates</span>
-                {moving.map((f) => (
-                  <FestivalRow key={f.id} f={f} />
-                ))}
-              </section>
+            <motion.div key="calendar" initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { duration: 0.25 } }} exit={{ opacity: 0, transition: { duration: 0.1 } }}>
+              <FestivalCalendar />
             </motion.div>
           )}
         </AnimatePresence>
       </div>
       <TabBar active="almanac" onGo={onGo} />
-    </div>
-  );
-}
-
-function FestivalRow({ f }: { f: (typeof FESTIVALS)[number] }) {
-  return (
-    <div className="mt-2 grid grid-cols-[minmax(0,1fr)] gap-1 border-t border-ink/15 pt-3">
-      <div className="flex items-baseline justify-between gap-3">
-        <span className="text-[16px] font-bold">{f.name}</span>
-        <Mono className="shrink-0 text-[9.5px] text-brick">{f.people}</Mono>
-      </div>
-      <span className="t-serif text-[16px] text-muted">
-        {f.place} · {f.when}
-      </span>
-      <p className="text-[13.5px] leading-[1.45]">{f.text}</p>
     </div>
   );
 }

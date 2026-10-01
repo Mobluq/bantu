@@ -127,7 +127,7 @@ export default function Page() {
                   <Emblem name="ijapa" size={110} disc color="var(--color-night)" bg="var(--color-gold)" rough={1.6} />
                 </div>
               </div>
-              <div className="relative">
+              <div className="relative w-full lg:w-auto">
                 <OnaApp jumpNav={false} />
                 <div aria-hidden="true" className="band-kente pointer-events-none absolute -left-8 -top-1 z-10 hidden h-6 w-32 -rotate-[28deg] opacity-95 shadow-[0_4px_8px_rgb(30_20_12_/_0.25)] lg:block" />
               </div>

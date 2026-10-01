@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { ENTRIES, entryById } from "@/lib/ona/almanac";
 import { GUIDES, type GuideId } from "@/lib/ona/data";
 import { TabBar } from "../TabBar";
+import { SpeakButton } from "../Speak";
 import { Emblem, Mono, snappy, spring } from "../primitives";
 import type { Screen } from "../state";
 
@@ -48,7 +49,7 @@ export function Entry({ id, onOpen, onAsk, onBack, onGo }: { id: string; onOpen:
   return (
     <div className="flex h-full flex-col bg-cream text-ink">
       <div className="no-scrollbar flex-1 overflow-y-auto" key={e.id}>
-        <section className={`torn-bottom relative h-[300px] overflow-hidden ${dark ? "ht-light" : "ht"}`} style={{ background: e.tone.bg, color: e.tone.fg }}>
+        <section className={`torn-bottom relative h-[min(300px,40svh)] min-h-[220px] overflow-hidden ${dark ? "ht-light" : "ht"}`} style={{ background: e.tone.bg, color: e.tone.fg }}>
           <motion.div initial={{ rotate: -10, opacity: 0 }} animate={{ rotate: 8, opacity: 1 }} transition={spring} className="absolute -right-20 top-[92px]">
             <Emblem name={e.emblem} size={220} color={e.tone.fg} bg={e.tone.bg} rough={2.8} />
           </motion.div>
@@ -60,7 +61,7 @@ export function Entry({ id, onOpen, onAsk, onBack, onGo }: { id: string; onOpen:
           </div>
           <div className="absolute bottom-8 left-5">
             <Mono className="mb-0.5 block text-[10px]">Entry</Mono>
-            <div className="t-serif text-[80px] leading-[0.8]">Nº {e.number}</div>
+            <div className="t-serif text-[min(80px,20cqw)] leading-[0.8]">Nº {e.number}</div>
           </div>
         </section>
 
@@ -69,7 +70,16 @@ export function Entry({ id, onOpen, onAsk, onBack, onGo }: { id: string; onOpen:
         ) : (
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={spring}>
             <div className="px-5 pt-4">
-              <h1 className="t-display text-[84px]">{e.name}</h1>
+              <div className="flex items-start justify-between gap-3">
+                <h1 className="t-display min-w-0 text-[min(84px,20cqw)]">{e.name}</h1>
+                <SpeakButton
+                  className="mt-3 shrink-0"
+                  text={`${e.full}. ${e.rows.map(([k, v]) => `${k}: ${v}`).join(". ")}`}
+                  guide={guide?.id ?? "keeper"}
+                  label={`the entry for ${e.name}`}
+                  size={40}
+                />
+              </div>
               <p className="t-serif mt-1 text-[21px] leading-[1.25] text-brick">{e.full}</p>
               <Mono className="mt-2 block text-muted">{e.people}</Mono>
             </div>
@@ -122,10 +132,13 @@ export function Entry({ id, onOpen, onAsk, onBack, onGo }: { id: string; onOpen:
 
             {e.story && (
               <article className="mx-5 mt-3.5 border-t-2 border-ink pt-[18px]">
-                <Mono className="text-brick">Story · told in many versions</Mono>
-                <h2 className="t-display mt-2 text-[40px]">{e.story.title}</h2>
+                <div className="flex items-center justify-between gap-3">
+                  <Mono className="text-brick">Story · told in many versions</Mono>
+                  <SpeakButton text={`${e.story.title}. ${e.story.body} ${e.story.moral ?? ""}`} guide={guide?.id ?? "keeper"} label="the story" wave={10} />
+                </div>
+                <h2 className="t-display mt-2 text-[min(40px,10.5cqw)]">{e.story.title}</h2>
                 <p className="mt-3 text-[15.5px] leading-[1.55]">
-                  <span className="t-serif float-left mr-2 mt-1.5 text-[66px] leading-[0.78] text-brick">{dropCap(e.story.body)[0]}</span>
+                  <span className="t-serif float-left mr-2 mt-1.5 text-[min(66px,16.9cqw)] leading-[0.78] text-brick">{dropCap(e.story.body)[0]}</span>
                   {dropCap(e.story.body)[1]}
                 </p>
                 {e.story.moral && <p className="t-serif mt-3 text-[20px] leading-[1.3]">{e.story.moral}</p>}

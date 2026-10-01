@@ -54,7 +54,7 @@ export function Splash({ onDone }: { onDone: () => void }) {
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ ...spring, delay: 0.4 }}
-        className="t-display-wide mt-4 block pl-[18px] text-[150px] leading-[0.8] text-brick"
+        className="t-display-wide mt-4 block pl-[18px] text-[min(150px,38.5cqw)] leading-[0.8] text-brick"
       >
         ọ̀nà
       </motion.span>

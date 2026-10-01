@@ -186,7 +186,17 @@ export const PLACES: Place[] = [
 
 export const TOTAL_PLACES = 36;
 
-export type Tale = { teller: EmblemName; title: string; told: string; text: string; minutes: number };
+export type Tale = {
+  teller: EmblemName;
+  /** Who reads the tale aloud. */
+  voice: GuideId;
+  title: string;
+  told: string;
+  text: string;
+  /** The full telling, read aloud on the night map. */
+  telling: string;
+  minutes: number;
+};
 
 /** Àlọ́: moonlight tales, keyed by culture. Missing cultures render an empty state. */
 export const TALES: Partial<Record<Culture, Tale>> = {
@@ -194,22 +204,31 @@ export const TALES: Partial<Record<Culture, Tale>> = {
     teller: "ijapa",
     title: "Ìjàpá’s sky feast",
     told: "told across Yorùbá and Igbo country",
+    voice: "esu",
     text: "The birds lend Tortoise their feathers for a feast in the sky. He eats more than his share and falls home. That is why his shell is cracked.",
-    minutes: 6,
+    telling:
+      "Gather close, and I will tell you a tale. There was a famine on the earth, and the birds were invited to a great feast in the sky. Ìjàpá the tortoise heard of it, and his belly would not let him rest. He went to each bird, polite as a guest, and begged one feather. Soon he had wings of every colour. On the way up, Ìjàpá said, at a feast in the sky each guest takes a new name. Mine is All of You. When the hosts set the food down and said, this is for all of you, Ìjàpá ate, and ate, and ate. The birds were left with bones. So each one took back its feather, and Ìjàpá was left with no wings at all. He called to his wife to pile soft things below, but she heard him wrong and piled hard things. Down he fell, and his shell cracked into pieces. It was mended, but you can still see the cracks today. And that is why greed is never a guest at a good feast.",
+    minutes: 1,
   },
   igbo: {
     teller: "ijapa",
     title: "Mbe takes a new name",
     told: "an Igbo telling",
+    voice: "ala",
     text: "Tortoise names himself ‘All of you’ before the feast, so every dish served ‘for all of you’ is his. The angry birds take back their feathers.",
-    minutes: 5,
+    telling:
+      "Listen, and I will tell it the way it was told to me. Mbe the tortoise was clever with words, and words were all he had, for he could not fly. When the birds were called to a feast in the sky, Mbe spoke so sweetly that each bird gave him a feather. Before they arrived he told them, guests at a great feast take new names. His new name was All of You. The people of the sky brought pounded yam and soup and palm wine, and said, this is for all of you. Mbe bowed and said, then it is mine. He ate until the pots were empty. The birds were angry. Parrot took back his feather, and then every bird took back its own. Mbe sent a message home: bring out every soft thing we own. But the message was turned around, and his household brought out hoes and pots and stones. Mbe fell, and his shell broke. That is why the tortoise shell is patched, and why a clever tongue must still share the pot.",
+    minutes: 1,
   },
   hausa: {
     teller: "gizo",
     title: "Gizo’s clever trouble",
     told: "a Hausa tatsuniya",
+    voice: "bayajidda",
     text: "Gizo the spider schemes his way to a meal he did not earn, and his wife Koki is left to sort out the mess.",
-    minutes: 5,
+    telling:
+      "Here is a tale. Gizo the spider was hungry, as he usually was, and lazy, as he always was. The farm needed weeding, but Gizo said his back was sore. When the harvest came, Gizo had a plan. He told the other animals that the chief wanted the best grain brought to his house, and that he, Gizo, had been chosen to carry it. One by one they filled his sacks. Gizo carried the grain home and hid it in the rafters. That night he crept up to eat it alone, but the sacks were heavy and the rafters were thin. Down came the grain, down came the sacks, and down came Gizo, right into the middle of the room. Koki his wife woke up and saw everything. In the morning she carried the grain back to every house, and told each family what had happened. Gizo stayed in his corner for a long time after that. And so the tale ends: grain you did not grow will not stay in your rafters.",
+    minutes: 1,
   },
 };
 
@@ -246,7 +265,7 @@ export type StampDef = {
   emblem: EmblemName;
   bg: string;
   fg: string;
-  opens: "almanac" | "artifact" | null;
+  opens: "almanac" | "artifact" | "calendar" | null;
   /** Almanac entry the stamp opens, when `opens` is "almanac". */
   entry?: string;
 };
@@ -256,8 +275,8 @@ export const STAMPS: StampDef[] = [
   { id: "nri", title: "Nri, the peace town", sub: "Anambra · Igbo road", value: "₦30", emblem: "ala", bg: "var(--color-indigo)", fg: "var(--color-cream)", opens: "almanac", entry: "ala" },
   { id: "daura", title: "Kusugu well, Daura", sub: "Katsina · Hausa road", value: "₦35", emblem: "bayajidda", bg: "var(--color-clay)", fg: "var(--color-ink)", opens: "almanac", entry: "bayajidda" },
   { id: "ife", title: "The Ifẹ̀ head", sub: "Ilé-Ifẹ̀ · copper alloy", value: "₦20", emblem: "ife", bg: "var(--color-clay)", fg: "var(--color-ink)", opens: "artifact" },
-  { id: "lagos", title: "Eyo masquerade", sub: "Lagos Island", value: "₦10", emblem: "eyo", bg: "var(--color-paper)", fg: "var(--color-ink)", opens: null },
-  { id: "benin", title: "Benin bronzes", sub: "Benin City · Edo", value: "₦25", emblem: "benin", bg: "var(--color-ochre)", fg: "var(--color-ink)", opens: null },
+  { id: "lagos", title: "Eyo masquerade", sub: "Lagos Island", value: "₦10", emblem: "eyo", bg: "var(--color-paper)", fg: "var(--color-ink)", opens: "calendar" },
+  { id: "benin", title: "Benin bronzes", sub: "Benin City · Edo", value: "₦25", emblem: "benin", bg: "var(--color-ochre)", fg: "var(--color-ink)", opens: "almanac", entry: "olokun" },
 ];
 
 export const GREETINGS = ["Ẹ kú àbọ̀", "Nnọọ", "Barka da zuwa", "Welcome", "Ẹ kú àbọ̀", "Nnọọ", "Sannu da zuwa"];

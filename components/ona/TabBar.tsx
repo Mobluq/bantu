@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { BookOpen, MapTrifold, Stamp, SunHorizon, UserCircle } from "@phosphor-icons/react";
 import type { Screen } from "./state";
 import { snappy } from "./primitives";
+import { sfx } from "@/lib/ona/sound";
 
 const TABS = [
   { id: "map", label: "Map", Icon: MapTrifold },
@@ -28,7 +29,10 @@ export function TabBar({ active, onGo, dark = false }: { active: Screen; onGo: (
           <motion.button
             key={id}
             type="button"
-            onClick={() => onGo(id)}
+            onClick={() => {
+              if (!on) sfx.tap();
+              onGo(id);
+            }}
             whileTap={{ scale: 0.94 }}
             transition={snappy}
             aria-current={on ? "page" : undefined}

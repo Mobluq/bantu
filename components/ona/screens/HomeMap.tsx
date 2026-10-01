@@ -1,13 +1,16 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, Fire, LockSimple, Moon, Play, Sun } from "@phosphor-icons/react";
-import { PLACES, TALES, TOTAL_PLACES, guideById, type PlaceStatus } from "@/lib/ona/data";
+import { ArrowRight, Fire, LockSimple, Moon, Pause, Play, Sun } from "@phosphor-icons/react";
+import { useEffect } from "react";
+import { ambience, sfx, stopSpeaking } from "@/lib/ona/sound";
+import { useSoundPrefs, useSpeaker } from "../Speak";
+import { PLACES, TALES, TOTAL_PLACES, guideById, type GuideId, type PlaceStatus } from "@/lib/ona/data";
 import { NigeriaMap } from "../NigeriaMap";
 import { ROADS, lessonsForRoad } from "@/lib/ona/roads";
 import { nextLesson } from "../state";
 import { TabBar } from "../TabBar";
-import { Cowrie, Emblem, KeyCap, Mono, PrimaryButton, snappy } from "../primitives";
+import { Cowrie, Emblem, KeyCap, Mono, PrimaryButton, Waveform, snappy } from "../primitives";
 import type { Screen } from "../state";
 
 type Props = {
@@ -40,7 +43,10 @@ function DayNightToggle({ night, setNight }: { night: boolean; setNight: (n: boo
             role="radio"
             aria-checked={on}
             aria-label={aria}
-            onClick={() => setNight(n)}
+            onClick={() => {
+              if (!on) sfx.whoosh();
+              setNight(n);
+            }}
             className={`relative flex min-h-[32px] items-center gap-[5px] rounded-full px-[11px] text-[12px] font-semibold ${
               on ? (night ? "text-ink" : "text-cream") : night ? "text-cream" : "text-ink"
             }`}
@@ -65,6 +71,19 @@ export function HomeMap({ night, setNight, statuses, selected, onSelect, cowries
   const road = ROADS.find((r) => r.place === place.id);
   const next = road ? nextLesson(road.id, completed) : null;
   const roadCount = road ? lessonsForRoad(road.id).filter((l) => completed.includes(l.id)).length : 0;
+
+  const prefs = useSoundPrefs();
+  useEffect(() => {
+    if (night && prefs.ambience) ambience.start();
+    else ambience.stop();
+  }, [night, prefs.ambience]);
+  useEffect(
+    () => () => {
+      ambience.stop();
+      stopSpeaking();
+    },
+    [],
+  );
 
   const fg = night ? "text-cream" : "text-ink";
   const pill = night ? "border-cream/40 text-cream" : "border-ink bg-paper text-ink";
@@ -93,6 +112,7 @@ export function HomeMap({ night, setNight, statuses, selected, onSelect, cowries
         )}
       </AnimatePresence>
 
+      <div className="no-scrollbar relative flex min-h-0 flex-1 flex-col overflow-y-auto">
       <header className="relative flex items-center justify-between px-4 pt-[52px]">
         <span className="flex items-center gap-2">
           <Emblem name="esu" size={24} color={night ? "var(--color-gold)" : "var(--color-brick)"} bg="transparent" rough={1.2} speckle={false} />
@@ -112,8 +132,8 @@ export function HomeMap({ night, setNight, statuses, selected, onSelect, cowries
 
       <div className="relative flex items-end justify-between px-4 pt-4">
         <h1 className="leading-[0.86]">
-          <span className="t-display block text-[50px]">Your</span>
-          <span className={`t-serif block text-[50px] leading-[0.95] ${night ? "text-gold" : "text-brick"}`}>Nigeria</span>
+          <span className="t-display block text-[min(50px,13cqw)]">Your</span>
+          <span className={`t-serif block text-[min(50px,13cqw)] leading-[0.95] ${night ? "text-gold" : "text-brick"}`}>Nigeria</span>
         </h1>
         <div className="flex flex-col items-end gap-2.5 pb-1">
           <DayNightToggle night={night} setNight={setNight} />
@@ -123,13 +143,13 @@ export function HomeMap({ night, setNight, statuses, selected, onSelect, cowries
         </div>
       </div>
 
-      <div className="relative px-3 pt-3">
-        <NigeriaMap night={night} statuses={statuses} selected={selected} onSelect={onSelect} />
+      <div className="relative min-h-[210px] flex-1">
+        <div className="absolute inset-0 px-3 pb-2 pt-3">
+          <NigeriaMap fill night={night} statuses={statuses} selected={selected} onSelect={onSelect} />
+        </div>
       </div>
 
-      <div className="flex-1" />
-
-      <section className={`torn-top relative px-[18px] pb-4 pt-[22px] ${night ? "bg-night-2" : "bg-paper"}`} aria-live="polite">
+      <section className={`torn-top relative shrink-0 px-[18px] pb-4 pt-[22px] ${night ? "bg-night-2" : "bg-paper"}`} aria-live="polite">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={`${place.id}-${night}-${status}`}
@@ -147,14 +167,7 @@ export function HomeMap({ night, setNight, statuses, selected, onSelect, cowries
                   sub={tale.told}
                   night
                   text={tale.text}
-                  action={
-                    <PrimaryButton tone="night">
-                      Listen by moonlight
-                      <KeyCap tone="night">
-                        <Play size={14} weight="fill" />
-                      </KeyCap>
-                    </PrimaryButton>
-                  }
+                  action={<ListenButton key={place.culture} text={`${tale.title}. ${tale.telling}`} voice={tale.voice} />}
                 />
               ) : (
                 <EmptySheet
@@ -210,9 +223,30 @@ export function HomeMap({ night, setNight, statuses, selected, onSelect, cowries
           </motion.div>
         </AnimatePresence>
       </section>
+      </div>
 
       <TabBar active="map" onGo={onGo} dark={night} />
     </motion.div>
+  );
+}
+
+function ListenButton({ text, voice }: { text: string; voice: GuideId }) {
+  const { playing, toggle, blocked, available } = useSpeaker(text, voice);
+  return (
+    <div>
+      <PrimaryButton tone="night" onClick={toggle} aria-pressed={playing}>
+        {playing ? "Stop the tale" : "Listen by moonlight"}
+        <span className="flex items-center gap-2.5">
+          {playing && <Waveform bars={10} height={16} playing className="text-ink" />}
+          <KeyCap tone="night">{playing ? <Pause size={14} weight="fill" /> : <Play size={14} weight="fill" />}</KeyCap>
+        </span>
+      </PrimaryButton>
+      {(blocked || !available) && (
+        <p role="status" className="mt-2 text-center text-[12px] text-cream/70">
+          {blocked ? "Turn on guide voices in Me to hear the tale." : "Voices are off. Turn them on in Me."}
+        </p>
+      )}
+    </div>
   );
 }
 
@@ -244,7 +278,7 @@ function SheetBody({
             {kicker}
             {meta}
           </div>
-          <div className="t-display mt-[5px] text-[34px]">{title}</div>
+          <div className="t-display mt-[5px] text-[min(34px,9cqw)]">{title}</div>
           <div className={`t-serif mt-0.5 text-[16px] ${night ? "text-cream/70" : "text-muted"}`}>{sub}</div>
         </div>
       </div>

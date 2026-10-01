@@ -168,3 +168,8 @@ body {
     transition-duration: 0.001ms !important;
   }
 }
+
+/* The app frame is a size container so headlines scale with the phone, not the window. */
+.ona-root {
+  container-type: inline-size;
+}

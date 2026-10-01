@@ -1,10 +1,11 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, Check, Play, Pause } from "@phosphor-icons/react";
-import { useEffect, useState } from "react";
+import { ArrowRight, Check } from "@phosphor-icons/react";
 import { GREETINGS, INTERESTS, guideById } from "@/lib/ona/data";
-import { Bubble, Emblem, KeyCap, Marquee, Mono, PrimaryButton, Waveform, snappy, spring } from "../primitives";
+import { Bubble, Emblem, KeyCap, Marquee, Mono, PrimaryButton, snappy, spring } from "../primitives";
+import { SpeakButton } from "../Speak";
+import { sfx } from "@/lib/ona/sound";
 
 export function Onboarding({
   interests,
@@ -18,12 +19,6 @@ export function Onboarding({
   onSecular: () => void;
 }) {
   const esu = guideById("esu");
-  const [playing, setPlaying] = useState(false);
-  useEffect(() => {
-    if (!playing) return;
-    const t = window.setTimeout(() => setPlaying(false), 9000);
-    return () => window.clearTimeout(t);
-  }, [playing]);
   const ready = interests.length > 0;
 
   return (
@@ -50,8 +45,8 @@ export function Onboarding({
               transition={{ ...spring, delay: 0.15 + i * 0.08 }}
               className={
                 i === 1
-                  ? "t-serif -ml-1 mb-1 mt-0.5 block text-[112px] leading-[0.78] text-gold"
-                  : "t-display block text-[84px]"
+                  ? "t-serif -ml-1 mb-1 mt-0.5 block text-[min(112px,28.7cqw)] leading-[0.78] text-gold"
+                  : "t-display block text-[min(84px,21.5cqw)]"
               }
             >
               {line}
@@ -73,20 +68,7 @@ export function Onboarding({
           </div>
           <Bubble
             who={esu.name}
-            action={
-              <button
-                type="button"
-                onClick={() => setPlaying((p) => !p)}
-                aria-label={playing ? "Pause Èṣù’s voice" : "Play Èṣù’s voice, 9 seconds"}
-                aria-pressed={playing}
-                className="flex min-h-[28px] items-center gap-2 text-ink"
-              >
-                <Waveform bars={12} height={16} playing={playing} />
-                <span className="flex size-7 items-center justify-center rounded-full bg-ink text-gold">
-                  {playing ? <Pause size={12} weight="fill" /> : <Play size={12} weight="fill" />}
-                </span>
-              </button>
-            }
+            action={<SpeakButton text={esu.greeting} guide="esu" label="Èṣù’s greeting" wave={12} />}
           >
             {esu.greeting}
           </Bubble>
@@ -105,7 +87,7 @@ export function Onboarding({
                   key={i}
                   type="button"
                   aria-pressed={on}
-                  onClick={() => onToggle(i)}
+                  onClick={() => { sfx.tap(); onToggle(i); }}
                   whileTap={{ scale: 0.96 }}
                   transition={snappy}
                   className={`flex h-11 items-center gap-1.5 rounded-full border-[1.5px] border-ink px-4 text-[14.5px] transition-colors duration-200 ${

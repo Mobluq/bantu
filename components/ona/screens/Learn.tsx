@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import { ChatCircleDots, Check, LockSimple, Play } from "@phosphor-icons/react";
 import { guideById } from "@/lib/ona/data";
 import { ROADS, lessonsForRoad, roadById, type RoadId } from "@/lib/ona/roads";
@@ -34,7 +35,15 @@ export function Learn({ road, completed, stamps, onRoad, onOpen, onAsk, onGo }: 
   const owned = stamps.includes(r.stamp);
   const [first, ...rest] = r.name.split(" ");
 
-  const W = 350;
+  const [W, setW] = useState(350);
+  const pathRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = pathRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([e]) => setW(Math.round(e.contentRect.width)));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
   const pts = lessons.map((_, i) => ({ x: XS[i] * W, y: 56 + i * STEP }));
   const d = pts.reduce((acc, p, i) => (i === 0 ? `M${p.x} ${p.y}` : `${acc} C${pts[i - 1].x} ${p.y - STEP / 2}, ${p.x} ${pts[i - 1].y + STEP / 2}, ${p.x} ${p.y}`), "");
 
@@ -79,8 +88,8 @@ export function Learn({ road, completed, stamps, onRoad, onOpen, onAsk, onGo }: 
           <AnimatePresence mode="wait" initial={false}>
             <motion.div key={road} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0, transition: spring }} exit={{ opacity: 0, transition: { duration: 0.1 } }}>
               <h1 className="mt-6 leading-[0.86]">
-                <span className="t-display block text-[56px]">{first}</span>
-                <span className="t-serif block text-[56px]" style={{ color: g.tone.bg === "var(--color-ink)" ? "var(--color-brick)" : g.tone.bg }}>
+                <span className="t-display block text-[min(56px,14.4cqw)]">{first}</span>
+                <span className="t-serif block text-[min(56px,14.4cqw)]" style={{ color: g.tone.bg === "var(--color-ink)" ? "var(--color-brick)" : g.tone.bg }}>
                   {rest.join(" ")}
                 </span>
               </h1>
@@ -99,6 +108,7 @@ export function Learn({ road, completed, stamps, onRoad, onOpen, onAsk, onGo }: 
         </header>
 
         <AnimatePresence mode="wait" initial={false}>
+          <div ref={pathRef} className="mx-5" aria-hidden="true" />
           <motion.section
             key={road}
             className="relative mx-5 mt-6"
@@ -127,11 +137,13 @@ export function Learn({ road, completed, stamps, onRoad, onOpen, onAsk, onGo }: 
               const locked = !done && !current;
               const p = pts[i];
               const labelRight = p.x < W / 2;
+              // Labels take whatever room the screen leaves beside the node, up to 150px.
+              const lw = Math.min(150, labelRight ? W - p.x - 34 - 12 : p.x - 34 - 12);
               return (
                 <motion.div
                   key={l.id}
                   className="absolute flex items-center gap-3"
-                  style={{ left: labelRight ? p.x - 34 : p.x - 34 - 162, top: p.y - 34, flexDirection: labelRight ? "row" : "row-reverse" }}
+                  style={{ left: labelRight ? p.x - 34 : p.x - 34 - 12 - lw, top: p.y - 34, flexDirection: labelRight ? "row" : "row-reverse" }}
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ ...spring, delay: 0.06 * i }}
@@ -151,7 +163,7 @@ export function Learn({ road, completed, stamps, onRoad, onOpen, onAsk, onGo }: 
                     {current && <span className="absolute -inset-2 animate-ping rounded-full border-2 border-gold opacity-40" />}
                     {done ? <Check size={28} weight="bold" /> : locked ? <LockSimple size={22} weight="light" /> : <Play size={24} weight="fill" />}
                   </motion.button>
-                  <div className={`w-[150px] ${labelRight ? "text-left" : "text-right"} ${locked ? "opacity-50" : ""}`}>
+                  <div style={{ width: lw }} className={`${labelRight ? "text-left" : "text-right"} ${locked ? "opacity-50" : ""}`}>
                     <Mono className="text-[9.5px] text-muted">
                       {String(l.n).padStart(2, "0")} · {l.topic} · {l.minutes} min
                     </Mono>

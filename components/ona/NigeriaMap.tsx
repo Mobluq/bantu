@@ -36,17 +36,19 @@ type Props = {
   statuses: Record<string, PlaceStatus>;
   selected: string;
   onSelect: (id: string) => void;
+  /** Fill the parent's height (the map is letterboxed inside it). */
+  fill?: boolean;
 };
 
 /** Illustrated Nigeria: three river-cut regions, real Natural Earth outline, tappable places. */
-export const NigeriaMap = memo(function NigeriaMap({ night, statuses, selected, onSelect }: Props) {
+export const NigeriaMap = memo(function NigeriaMap({ night, statuses, selected, onSelect, fill = false }: Props) {
   const c = night ? NIGHT : DAY;
   const uid = useId().replace(/:/g, "");
   const k = `${uid}${night ? "n" : "d"}`;
   return (
     <svg
       viewBox={`-4 -4 ${MAP_W + 10} ${MAP_H + 12}`}
-      className="block h-auto w-full overflow-visible"
+      className={`block w-full overflow-visible ${fill ? "h-full" : "h-auto"}`}
       role="group"
       aria-label="Map of Nigeria, split by the Niger and Benue rivers"
     >

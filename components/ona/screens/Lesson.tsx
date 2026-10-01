@@ -1,20 +1,39 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowCounterClockwise, ArrowRight, Check, X } from "@phosphor-icons/react";
-import { useMemo, useState } from "react";
-import { guideById } from "@/lib/ona/data";
-import { lessonById, roadById, type Step } from "@/lib/ona/roads";
+import { ArrowCounterClockwise, ArrowRight, BookmarkSimple, Check, X } from "@phosphor-icons/react";
+import { useEffect, useMemo, useState } from "react";
+import { guideById, type GuideId } from "@/lib/ona/data";
+import { lessonById, roadById, type RoadId, type Step } from "@/lib/ona/roads";
+import { sfx, stopSpeaking } from "@/lib/ona/sound";
 import { Bubble, Cowrie, Emblem, KeyCap, Mono, PrimaryButton, snappy, spring } from "../primitives";
+import { SpeakButton } from "../Speak";
+import type { SavedWord } from "../state";
 
 type Props = {
   lessonId: string | null;
   lives: number;
+  lifeAt: number | null;
+  completed: string[];
+  saved: SavedWord[];
+  onToggleSave: (w: SavedWord) => void;
   onAnswer: (correct: boolean) => void;
-  onRefill: () => void;
+  onPractice: (lessonId: string) => void;
   onClose: () => void;
   onFinish: (lessonId: string, earned: number) => void;
 };
+
+function useCountdown(to: number | null) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!to) return;
+    const t = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(t);
+  }, [to]);
+  if (!to) return null;
+  const ms = Math.max(0, to - now);
+  return `${Math.floor(ms / 60000)}:${String(Math.floor((ms % 60000) / 1000)).padStart(2, "0")}`;
+}
 
 type Verdict = { ok: boolean; text: string } | null;
 
@@ -30,12 +49,20 @@ function shuffled<T>(xs: T[], seed: number): T[] {
   return a;
 }
 
-export function Lesson({ lessonId, lives, onAnswer, onRefill, onClose, onFinish }: Props) {
+export function Lesson({ lessonId, lives, lifeAt, completed, saved, onToggleSave, onAnswer, onPractice, onClose, onFinish }: Props) {
   const lesson = lessonById(lessonId ?? "") ?? null;
   const [i, setI] = useState(0);
   const [verdict, setVerdict] = useState<Verdict>(null);
   const [mistakes, setMistakes] = useState(0);
   const [done, setDone] = useState(false);
+  const countdown = useCountdown(lives === 0 ? lifeAt : null);
+  useEffect(() => () => stopSpeaking(), []);
+  useEffect(() => {
+    if (done) {
+      sfx.complete();
+      window.setTimeout(() => sfx.cowrie(), 650);
+    }
+  }, [done]);
 
   if (!lesson) {
     return (
@@ -57,6 +84,8 @@ export function Lesson({ lessonId, lives, onAnswer, onRefill, onClose, onFinish 
   const earned = Math.max(4, 12 - mistakes * 2);
 
   const judge = (ok: boolean, text: string) => {
+    if (ok) sfx.correct();
+    else sfx.wrong();
     if (!ok) {
       setMistakes((m) => m + 1);
       onAnswer(false);
@@ -64,23 +93,26 @@ export function Lesson({ lessonId, lives, onAnswer, onRefill, onClose, onFinish 
     setVerdict({ ok, text });
   };
   const advance = () => {
+    stopSpeaking();
     setVerdict(null);
     if (i + 1 < lesson.steps.length) setI(i + 1);
     else setDone(true);
   };
 
   const outOfLives = lives === 0 && verdict && !verdict.ok;
+  const practiceId = completed.find((id) => id !== lesson?.id) ?? null;
 
   if (done) {
     return (
       <div className="graph-light ht-light relative flex h-full flex-col bg-forest px-6 pb-[max(env(safe-area-inset-bottom),28px)] pt-16 text-cream">
         <Mono className="text-gold">{road.people} · Lesson {String(lesson.n).padStart(2, "0")} / 05</Mono>
         <motion.h1 initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={spring} className="mt-4 leading-[0.86]">
-          <span className="t-display block text-[68px]">Ó dáa</span>
-          <span className="t-serif block text-[64px] text-gold">gan-an.</span>
+          <span className="t-display block text-[min(68px,17.4cqw)]">Ó dáa</span>
+          <span className="t-serif block text-[min(64px,16.4cqw)] text-gold">gan-an.</span>
         </motion.h1>
         <p className="mt-4 max-w-[30ch] text-[15px] leading-[1.45] text-cream/85">
           You finished “{lesson.title.join(" ")}” with {mistakes === 0 ? "no mistakes" : `${mistakes} slip${mistakes > 1 ? "s" : ""}`}.
+          {completed.includes(lesson.id) ? " Practice earns a cowrie back." : ""}
         </p>
         <motion.div
           className="sticker mx-auto mt-10"
@@ -92,13 +124,13 @@ export function Lesson({ lessonId, lives, onAnswer, onRefill, onClose, onFinish 
         </motion.div>
         <div className="mt-8 flex items-center justify-center gap-2">
           <Cowrie size={22} fill="var(--color-gold)" />
-          <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="t-display-wide text-[40px] text-gold">
-            +{earned}
+          <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="t-display-wide text-[min(40px,10.3cqw)] text-gold">
+            +{completed.includes(lesson.id) ? Math.ceil(earned / 3) : earned}
           </motion.span>
         </div>
         <div className="flex-1" />
         <PrimaryButton tone="gold" onClick={() => onFinish(lesson.id, earned)}>
-          {lesson.n === 5 ? "Claim your stamp" : "Back to the road"}
+          {lesson.n === 5 && !completed.includes(lesson.id) ? "Claim your stamp" : "Back to the road"}
           <KeyCap tone="gold">
             <ArrowRight size={18} weight="light" />
           </KeyCap>
@@ -149,11 +181,24 @@ export function Lesson({ lessonId, lives, onAnswer, onRefill, onClose, onFinish 
           >
             {i === 0 && (
               <h1 className="mb-4 leading-[0.86]">
-                <span className="t-display text-[52px]">{lesson.title[0]} </span>
-                <span className="t-serif text-[54px] text-brick">{lesson.title[1]}</span>
+                <span className="t-display text-[min(52px,13.3cqw)]">{lesson.title[0]} </span>
+                <span className="t-serif text-[min(54px,13.8cqw)] text-brick">{lesson.title[1]}</span>
               </h1>
             )}
-            <StepView step={step} seed={lesson.n * 31 + i} guideName={guide.name} guideEmblem={guide.emblem} tone={guide.tone} onJudge={judge} onFactDone={advance} locked={!!verdict} />
+            <StepView
+              step={step}
+              seed={lesson.n * 31 + i}
+              guideId={guide.id}
+              guideName={guide.name}
+              guideEmblem={guide.emblem}
+              tone={guide.tone}
+              road={lesson.road}
+              saved={saved}
+              onToggleSave={onToggleSave}
+              onJudge={judge}
+              onFactDone={advance}
+              locked={!!verdict}
+            />
           </motion.div>
         </AnimatePresence>
       </div>
@@ -188,13 +233,25 @@ export function Lesson({ lessonId, lives, onAnswer, onRefill, onClose, onFinish 
               </PrimaryButton>
             ) : outOfLives ? (
               <div className="flex flex-col gap-2.5">
-                <p className="rounded-[14px] border-[1.5px] border-cream/40 p-3.5 text-[13.5px]">Out of cowries. In the full app they refill at dawn.</p>
-                <PrimaryButton tone="gold" onClick={() => { onRefill(); setVerdict(null); }}>
-                  Refill (prototype)
-                  <KeyCap tone="gold">
-                    <ArrowCounterClockwise size={18} weight="light" />
-                  </KeyCap>
-                </PrimaryButton>
+                <p className="rounded-[14px] border-[1.5px] border-cream/40 p-3.5 text-[13.5px]">
+                  Out of cowries. The next one arrives in <b className="tabular-nums">{countdown ?? "a moment"}</b>
+                  {practiceId ? ", or practise a lesson you have finished to earn one now." : "."}
+                </p>
+                {practiceId ? (
+                  <PrimaryButton tone="gold" onClick={() => onPractice(practiceId)}>
+                    Practise to earn a cowrie
+                    <KeyCap tone="gold">
+                      <ArrowCounterClockwise size={18} weight="light" />
+                    </KeyCap>
+                  </PrimaryButton>
+                ) : (
+                  <PrimaryButton tone="gold" onClick={onClose}>
+                    Back to the road
+                    <KeyCap tone="gold">
+                      <ArrowRight size={18} weight="light" />
+                    </KeyCap>
+                  </PrimaryButton>
+                )}
               </div>
             ) : (
               <PrimaryButton tone="gold" onClick={() => setVerdict(null)}>
@@ -214,15 +271,23 @@ export function Lesson({ lessonId, lives, onAnswer, onRefill, onClose, onFinish 
 function StepView({
   step,
   seed,
+  guideId,
   guideName,
   guideEmblem,
   tone,
+  road,
+  saved,
+  onToggleSave,
   onJudge,
   onFactDone,
   locked,
 }: {
   step: Step;
   seed: number;
+  guideId: GuideId;
+  road: RoadId;
+  saved: SavedWord[];
+  onToggleSave: (w: SavedWord) => void;
   guideName: string;
   guideEmblem: Parameters<typeof Emblem>[0]["name"];
   tone: { bg: string; fg: string };
@@ -241,7 +306,7 @@ function StepView({
       <div className="flex flex-col gap-4">
         <div className="flex items-start gap-2.5">
           {speaker}
-          <Bubble who={guideName}>
+          <Bubble who={guideName} action={<SpeakButton text={`${step.title}. ${step.body}`} guide={guideId} label={`${guideName} explaining`} />}>
             <span className="block font-bold">{step.title}</span>
             <span className="mt-1 block">{step.body}</span>
           </Bubble>
@@ -254,10 +319,14 @@ function StepView({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ ...spring, delay: 0.08 * k }}
-                className="flex items-baseline justify-between gap-4 border-b border-ink/15 py-3"
+                className="flex items-center justify-between gap-3 border-b border-ink/15 py-3"
               >
-                <dt className="t-display text-[34px]">{term}</dt>
-                <dd className="t-serif text-right text-[18px] text-muted">{meaning}</dd>
+                <dt className="t-display min-w-0 break-words text-[min(34px,8.5cqw)]">{term}</dt>
+                <dd className="flex shrink-0 items-center gap-2">
+                  <span className="t-serif max-w-[11ch] text-right text-[17px] leading-tight text-muted">{meaning}</span>
+                  <SpeakButton text={`${term}. ${meaning}.`} guide={guideId} label={`the word ${term}`} size={30} tone="cream" className="ring-1 ring-ink/15 rounded-full" />
+                  <SaveButton word={{ term, meaning, road }} saved={saved} onToggle={onToggleSave} />
+                </dd>
               </motion.div>
             ))}
           </dl>
@@ -272,7 +341,7 @@ function StepView({
     );
   }
 
-  if (step.kind === "choose") return <Choose step={step} seed={seed} speaker={speaker} guideName={guideName} onJudge={onJudge} locked={locked} />;
+  if (step.kind === "choose") return <Choose step={step} seed={seed} speaker={speaker} guideId={guideId} guideName={guideName} onJudge={onJudge} locked={locked} />;
   if (step.kind === "match") return <Match step={step} seed={seed} onJudge={onJudge} />;
   return <Order step={step} seed={seed} onJudge={onJudge} locked={locked} />;
 }
@@ -281,6 +350,7 @@ function Choose({
   step,
   seed,
   speaker,
+  guideId,
   guideName,
   onJudge,
   locked,
@@ -288,6 +358,7 @@ function Choose({
   step: Extract<Step, { kind: "choose" }>;
   seed: number;
   speaker: React.ReactNode;
+  guideId: GuideId;
   guideName: string;
   onJudge: (ok: boolean, text: string) => void;
   locked: boolean;
@@ -298,7 +369,9 @@ function Choose({
     <div className="flex flex-col gap-4">
       <div className="flex items-start gap-2.5">
         {speaker}
-        <Bubble who={guideName}>{step.prompt}</Bubble>
+        <Bubble who={guideName} action={<SpeakButton text={step.prompt} guide={guideId} label={`${guideName}’s question`} />}>
+          {step.prompt}
+        </Bubble>
       </div>
       <div role="radiogroup" aria-label="Answers" className="flex flex-col gap-2.5">
         {options.map((o, k) => {
@@ -358,10 +431,12 @@ function Match({ step, seed, onJudge }: { step: Extract<Step, { kind: "match" }>
     if (!left) return;
     if (answer[left] === r) {
       const next = [...matched, left];
+      sfx.tap();
       setMatched(next);
       setLeft(null);
       if (next.length === step.pairs.length) onJudge(true, "All matched. Say each one out loud once before you move on.");
     } else {
+      sfx.wrong();
       setMiss(r);
       window.setTimeout(() => setMiss(null), 450);
       setLeft(null);
@@ -381,7 +456,7 @@ function Match({ step, seed, onJudge }: { step: Extract<Step, { kind: "match" }>
           {lefts.map((l) => {
             const done = matched.includes(l);
             return (
-              <motion.button key={l} type="button" disabled={done} onClick={() => setLeft(l)} whileTap={{ scale: 0.97 }} transition={snappy} aria-pressed={left === l} className={cell(left === l, done, false)}>
+              <motion.button key={l} type="button" disabled={done} onClick={() => { sfx.tap(); setLeft(l); }} whileTap={{ scale: 0.97 }} transition={snappy} aria-pressed={left === l} className={cell(left === l, done, false)}>
                 {l}
               </motion.button>
             );
@@ -449,7 +524,7 @@ function Order({ step, seed, onJudge, locked }: { step: Extract<Step, { kind: "o
               {w}
             </span>
           ) : (
-            <motion.button layoutId={`w-${k}`} key={k} type="button" onClick={() => setLine([...line, k])} transition={snappy} className="rounded-xl border-[1.5px] border-ink bg-paper px-3.5 py-2.5 text-[18px] font-bold shadow-[0_3px_0_var(--color-ink)]">
+            <motion.button layoutId={`w-${k}`} key={k} type="button" onClick={() => { sfx.tap(); setLine([...line, k]); }} transition={snappy} className="rounded-xl border-[1.5px] border-ink bg-paper px-3.5 py-2.5 text-[18px] font-bold shadow-[0_3px_0_var(--color-ink)]">
               {w}
             </motion.button>
           ),
@@ -462,5 +537,25 @@ function Order({ step, seed, onJudge, locked }: { step: Extract<Step, { kind: "o
         </KeyCap>
       </PrimaryButton>
     </div>
+  );
+}
+
+function SaveButton({ word, saved, onToggle }: { word: SavedWord; saved: SavedWord[]; onToggle: (w: SavedWord) => void }) {
+  const on = saved.some((w) => w.term === word.term);
+  return (
+    <motion.button
+      type="button"
+      onClick={() => {
+        if (!on) sfx.cowrie();
+        onToggle(word);
+      }}
+      whileTap={{ scale: 0.88 }}
+      transition={snappy}
+      aria-pressed={on}
+      aria-label={on ? `Remove ${word.term} from your notebook` : `Save ${word.term} to your notebook`}
+      className={`flex size-[30px] items-center justify-center rounded-full ring-1 ${on ? "bg-brick text-cream ring-brick" : "bg-cream text-ink ring-ink/15"}`}
+    >
+      <BookmarkSimple size={15} weight={on ? "fill" : "light"} />
+    </motion.button>
   );
 }

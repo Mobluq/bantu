@@ -17,6 +17,7 @@ import { Learn } from "./screens/Learn";
 import { roadById } from "@/lib/ona/roads";
 import { Me } from "./screens/Me";
 import { spring } from "./primitives";
+import { stopSpeaking, unlockAudio } from "@/lib/ona/sound";
 
 const JUMP: { id: Screen; label: string }[] = [
   { id: "splash", label: "Splash" },
@@ -41,7 +42,13 @@ export function OnaApp({ bare = false, jumpNav = true }: { bare?: boolean; jumpN
   useEffect(() => {
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY);
-      if (raw) dispatch({ type: "hydrate", saved: JSON.parse(raw) as Partial<SavedState> });
+      if (raw) {
+        const saved = JSON.parse(raw) as Partial<SavedState>;
+        dispatch({ type: "hydrate", saved });
+        // A returning traveller arriving after dark lands on the Àlọ́ (moonlight) map.
+        const h = new Date().getHours();
+        if (saved.onboarded && (h >= 19 || h < 6)) dispatch({ type: "setNight", night: true });
+      }
     } catch {
       /* start fresh */
     }
@@ -62,13 +69,35 @@ export function OnaApp({ bare = false, jumpNav = true }: { bare?: boolean; jumpN
       selectedPlace: s.selectedPlace,
       completed: s.completed,
       road: s.road,
+      saved: s.saved,
+      lastDay: s.lastDay,
+      lifeAt: s.lifeAt,
     };
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
     } catch {
       /* progress just won't persist */
     }
-  }, [s.interests, s.guide, s.lives, s.cowries, s.streak, s.stamps, s.statuses, s.onboarded, s.selectedPlace, s.completed, s.road]);
+  }, [s.interests, s.guide, s.lives, s.cowries, s.streak, s.stamps, s.statuses, s.onboarded, s.selectedPlace, s.completed, s.road, s.saved, s.lastDay, s.lifeAt]);
+
+  // Cowries (lives) regenerate over time; check on mount and every 30s.
+  useEffect(() => {
+    const t = () => dispatch({ type: "tick", now: Date.now() });
+    t();
+    const id = window.setInterval(t, 30_000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  // Browsers start audio suspended until a gesture.
+  useEffect(() => {
+    const unlock = () => unlockAudio();
+    window.addEventListener("pointerdown", unlock, { once: true });
+    return () => window.removeEventListener("pointerdown", unlock);
+  }, []);
+
+  // A guide stops talking when you leave the screen.
+  useEffect(() => stopSpeaking, [s.screen]);
+
   const go = useCallback((screen: Screen) => dispatch({ type: "go", screen }), []);
   const leaveSplash = useCallback(() => dispatch({ type: "go", screen: "onboarding" }), []);
   const clearFlash = useCallback(() => dispatch({ type: "clearStampFlash" }), []);
@@ -130,21 +159,25 @@ export function OnaApp({ bare = false, jumpNav = true }: { bare?: boolean; jumpN
           key={s.lessonId ?? "none"}
           lessonId={s.lessonId}
           lives={s.lives}
+          lifeAt={s.lifeAt}
+          completed={s.completed}
+          saved={s.saved}
+          onToggleSave={(word) => dispatch({ type: "toggleSave", word })}
           onAnswer={(correct) => dispatch({ type: "answer", correct })}
-          onRefill={() => dispatch({ type: "refill" })}
+          onPractice={(id) => dispatch({ type: "openLesson", id })}
           onClose={() => go("learn")}
           onFinish={(id, earned) => dispatch({ type: "finishLesson", id, earned })}
         />
       );
       break;
     case "stamps":
-      view = <Stamps stamps={s.stamps} justStamped={s.justStamped} onClearFlash={clearFlash} onOpenEntry={(id) => dispatch({ type: "openEntry", id })} onGo={go} />;
+      view = <Stamps onCalendar={() => dispatch({ type: "openAlmanac", tab: "calendar" })} stamps={s.stamps} justStamped={s.justStamped} onClearFlash={clearFlash} onOpenEntry={(id) => dispatch({ type: "openEntry", id })} onGo={go} />;
       break;
     case "artifact":
       view = <Artifact onBack={() => go("stamps")} />;
       break;
     case "almanac":
-      view = <Almanac onOpen={(id) => dispatch({ type: "openEntry", id })} onGo={go} />;
+      view = <Almanac key={s.almanacTab} initialTab={s.almanacTab} onOpen={(id) => dispatch({ type: "openEntry", id })} onGo={go} />;
       break;
     case "entry":
       view = (
@@ -168,6 +201,9 @@ export function OnaApp({ bare = false, jumpNav = true }: { bare?: boolean; jumpN
           streak={s.streak}
           stamps={s.stamps.length}
           lessons={s.completed.length}
+          lives={s.lives}
+          saved={s.saved}
+          onRemoveWord={(word) => dispatch({ type: "toggleSave", word })}
           onAsk={() => dispatch({ type: "openChat", guide: s.guide, from: "me" })}
           onGo={go}
           onReset={() => {
@@ -201,7 +237,7 @@ export function OnaApp({ bare = false, jumpNav = true }: { bare?: boolean; jumpN
   if (bare) {
     return (
       <MotionConfig reducedMotion="user">
-        <div className="relative mx-auto h-[100dvh] w-full max-w-[480px] overflow-hidden bg-cream">{screen}</div>
+        <div className="ona-root relative mx-auto h-[100dvh] w-full max-w-[480px] overflow-hidden bg-cream sm:my-0 sm:shadow-[0_0_0_1px_rgb(30_20_12_/_0.08),0_40px_80px_-30px_rgb(30_20_12_/_0.4)]">{screen}</div>
       </MotionConfig>
     );
   }
@@ -226,7 +262,7 @@ export function OnaApp({ bare = false, jumpNav = true }: { bare?: boolean; jumpN
         </nav>
 
         <div className="w-full lg:w-auto lg:rounded-[64px] lg:bg-ink/[0.05] lg:p-2 lg:shadow-[0_60px_120px_-40px_rgb(30_20_12_/_0.35),0_20px_40px_-20px_rgb(30_20_12_/_0.18)] lg:ring-1 lg:ring-ink/10">
-        <div className="relative h-[100dvh] w-full overflow-hidden bg-cream lg:h-[844px] lg:w-[390px] lg:rounded-[56px] lg:border-[9px] lg:border-ink lg:shadow-[inset_0_1px_1px_rgb(255_255_255_/_0.15)]">
+        <div className="ona-root relative mx-auto h-[100dvh] w-full max-w-[480px] overflow-hidden bg-cream lg:h-[844px] lg:w-[390px] lg:rounded-[56px] lg:border-[9px] lg:border-ink lg:shadow-[inset_0_1px_1px_rgb(255_255_255_/_0.15)]">
           {screen}
         </div>
         </div>

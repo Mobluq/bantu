@@ -6,6 +6,8 @@ import { useEffect, useRef, useState } from "react";
 import { guideById, type GuideId } from "@/lib/ona/data";
 import { offlineAnswer } from "@/lib/ona/guideBrief";
 import { Emblem, Mono, snappy, spring } from "../primitives";
+import { SpeakButton } from "../Speak";
+import { sfx } from "@/lib/ona/sound";
 
 type Msg = { role: "user" | "assistant"; content: string; offline?: boolean };
 
@@ -37,6 +39,7 @@ export function Chat({ guide, onBack }: { guide: GuideId; onBack: () => void }) 
     const next: Msg[] = [...msgs, { role: "user", content: q }];
     setMsgs(next);
     setDraft("");
+    sfx.tap();
     if (offline) {
       setMsgs([...next, { role: "assistant", content: offlineAnswer(guide, q), offline: true }]);
       return;
@@ -51,9 +54,11 @@ export function Chat({ guide, onBack }: { guide: GuideId; onBack: () => void }) 
       });
       const data = (await res.json()) as { reply?: string; error?: string };
       if (data.reply) {
+        sfx.cowrie();
         setMsgs([...next, { role: "assistant", content: data.reply }]);
       } else if (data.error === "no_key") {
         setOffline(true);
+        sfx.cowrie();
         setMsgs([...next, { role: "assistant", content: offlineAnswer(guide, q), offline: true }]);
       } else {
         setError(data.error === "busy" ? `${g.name} is speaking with many travellers. Try again in a moment.` : "That message did not reach the guide. Try again.");
@@ -112,6 +117,11 @@ export function Chat({ guide, onBack }: { guide: GuideId; onBack: () => void }) 
                 }`}
               >
                 {m.content}
+                {m.role === "assistant" && (
+                  <div className="mt-1.5 flex justify-end">
+                    <SpeakButton text={m.content} guide={guide} label={`${g.name}’s reply`} size={26} />
+                  </div>
+                )}
                 {m.offline && <Mono className="mt-1.5 block text-[9px] text-muted">From the almanac · live chat needs an API key</Mono>}
               </div>
             </motion.div>

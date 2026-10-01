@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { LockSimple } from "@phosphor-icons/react";
 import { useEffect } from "react";
+import { sfx } from "@/lib/ona/sound";
 import { STAMPS, TOTAL_PLACES, type StampDef } from "@/lib/ona/data";
 import { ROADS } from "@/lib/ona/roads";
 import { TabBar } from "../TabBar";
@@ -55,7 +56,9 @@ export function Stamps({
   onClearFlash,
   onOpenEntry,
   onGo,
+  onCalendar,
 }: {
+  onCalendar: () => void;
   stamps: string[];
   justStamped: string | null;
   onClearFlash: () => void;
@@ -64,8 +67,13 @@ export function Stamps({
 }) {
   useEffect(() => {
     if (!justStamped) return;
+    // The thud lands with the postmark.
+    const thud = window.setTimeout(() => sfx.stamp(), 850);
     const t = window.setTimeout(onClearFlash, 4500);
-    return () => window.clearTimeout(t);
+    return () => {
+      window.clearTimeout(thud);
+      window.clearTimeout(t);
+    };
   }, [justStamped, onClearFlash]);
 
   const roadOf = (id: string) => ROADS.find((r) => r.stamp === id);
@@ -80,11 +88,11 @@ export function Stamps({
           </div>
           <div className="mt-2.5 flex items-end justify-between">
             <h1 className="leading-[0.84]">
-              <span className="t-display block text-[68px]">Stamp</span>
-              <span className="t-serif block text-[66px] text-gold">book</span>
+              <span className="t-display block text-[min(68px,17.4cqw)]">Stamp</span>
+              <span className="t-serif block text-[min(66px,16.9cqw)] text-gold">book</span>
             </h1>
             <div className="pb-1.5 text-right">
-              <motion.div key={stamps.length} initial={{ scale: 1.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={spring} className="t-display-wide text-[44px] tabular-nums text-gold">
+              <motion.div key={stamps.length} initial={{ scale: 1.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={spring} className="t-display-wide text-[min(44px,11.3cqw)] tabular-nums text-gold">
                 {String(stamps.length).padStart(2, "0")}
               </motion.div>
               <Mono className="text-[9.5px]">of {TOTAL_PLACES} places</Mono>
@@ -106,7 +114,12 @@ export function Stamps({
                 </div>
               );
             }
-            const open = () => (s.opens === "artifact" ? onGo("artifact") : s.entry ? onOpenEntry(s.entry) : undefined);
+            const open = () => {
+              sfx.whoosh();
+              if (s.opens === "artifact") onGo("artifact");
+              else if (s.opens === "calendar") onCalendar();
+              else if (s.entry) onOpenEntry(s.entry);
+            };
             return (
               <div key={s.id} className="relative">
                 <motion.button

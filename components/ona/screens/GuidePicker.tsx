@@ -1,21 +1,38 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, Pause, Play } from "@phosphor-icons/react";
-import { useEffect, useState } from "react";
+import { ArrowLeft, ArrowRight, Pause, SpeakerHigh } from "@phosphor-icons/react";
 import { GUIDES, type GuideId, guideById } from "@/lib/ona/data";
 import { Emblem, KeyCap, Mono, PrimaryButton, Waveform, snappy, spring } from "../primitives";
+import { useSpeaker } from "../Speak";
+import { sfx } from "@/lib/ona/sound";
+
+function GuideVoice({ text, guide, name, color, bg }: { text: string; guide: GuideId; name: string; color: string; bg: string }) {
+  const { playing, toggle, blocked } = useSpeaker(text, guide);
+  return (
+    <div className="relative mt-3.5">
+      <button
+        type="button"
+        onClick={toggle}
+        aria-pressed={playing}
+        aria-label={playing ? `Stop ${name}` : `Hear ${name}`}
+        className="flex min-h-11 items-center gap-2.5 rounded-full border-[1.5px] py-[5px] pl-[5px] pr-3.5"
+        style={{ borderColor: "color-mix(in srgb, currentColor 45%, transparent)", color }}
+      >
+        <span className="flex size-[34px] items-center justify-center rounded-full bg-current">
+          <span style={{ color: bg }}>{playing ? <Pause size={13} weight="fill" /> : <SpeakerHigh size={15} weight="fill" />}</span>
+        </span>
+        <Waveform bars={16} height={18} playing={playing} />
+        <Mono className="text-[10px]">{playing ? "Speaking" : "Hear me"}</Mono>
+      </button>
+      {blocked && <span className="mt-1.5 block text-[12px] font-semibold">Guide voices are off. Turn them on in Me.</span>}
+    </div>
+  );
+}
 
 export function GuidePicker({ guide, onPick, onBack, onNext }: { guide: GuideId; onPick: (g: GuideId) => void; onBack: () => void; onNext: () => void }) {
   const g = guideById(guide);
   const index = GUIDES.findIndex((x) => x.id === guide) + 1;
-  const [playing, setPlaying] = useState(false);
-  useEffect(() => setPlaying(false), [guide]);
-  useEffect(() => {
-    if (!playing) return;
-    const t = window.setTimeout(() => setPlaying(false), 7000);
-    return () => window.clearTimeout(t);
-  }, [playing]);
 
   const light = g.id === "keeper";
 
@@ -28,8 +45,8 @@ export function GuidePicker({ guide, onPick, onBack, onNext }: { guide: GuideId;
         <Mono>Step 2 / 3</Mono>
       </div>
       <h1 className="mx-5 mt-2">
-        <span className="t-display block text-[64px]">Who walks</span>
-        <span className="t-serif block text-[62px] leading-[0.9] text-brick">with you?</span>
+        <span className="t-display block text-[min(64px,16.4cqw)]">Who walks</span>
+        <span className="t-serif block text-[min(62px,15.9cqw)] leading-[0.9] text-brick">with you?</span>
       </h1>
       <p className="mx-5 mt-2.5 max-w-[34ch] text-[14px] leading-[1.42] text-muted">
         Every guide teaches the same checked facts. Each tells them in their own voice.
@@ -61,7 +78,7 @@ export function GuidePicker({ guide, onPick, onBack, onNext }: { guide: GuideId;
           </div>
           <AnimatePresence mode="wait" initial={false}>
             <motion.div key={g.id} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={snappy}>
-              <div className="t-display mt-[66px] text-[80px]">{g.name}</div>
+              <div className="t-display mt-[66px] text-[min(80px,20.5cqw)]">{g.name}</div>
               <div className="t-serif mt-1 text-[21px]" style={{ color: light ? "var(--color-brick)" : g.tone.fg }}>
                 {g.domain}
               </div>
@@ -72,20 +89,7 @@ export function GuidePicker({ guide, onPick, onBack, onNext }: { guide: GuideId;
               </div>
             </motion.div>
           </AnimatePresence>
-          <button
-            type="button"
-            onClick={() => setPlaying((p) => !p)}
-            aria-pressed={playing}
-            aria-label={playing ? `Pause ${g.name}` : `Hear ${g.name}`}
-            className="mt-3.5 flex min-h-11 items-center gap-2.5 rounded-full border-[1.5px] py-[5px] pl-[5px] pr-3.5"
-            style={{ borderColor: "color-mix(in srgb, currentColor 45%, transparent)", color: light ? "var(--color-ink)" : g.tone.fg }}
-          >
-            <span className="flex size-[34px] items-center justify-center rounded-full bg-current">
-              <span style={{ color: g.tone.bg }}>{playing ? <Pause size={13} weight="fill" /> : <Play size={13} weight="fill" />}</span>
-            </span>
-            <Waveform bars={16} height={18} playing={playing} />
-            <Mono className="text-[10px]">{playing ? "Playing" : "0:07"}</Mono>
-          </button>
+          <GuideVoice key={g.id} text={g.greeting} guide={g.id} name={g.name} color={light ? "var(--color-ink)" : g.tone.fg} bg={g.tone.bg} />
         </div>
       </motion.div>
 
@@ -98,7 +102,7 @@ export function GuidePicker({ guide, onPick, onBack, onNext }: { guide: GuideId;
               type="button"
               role="radio"
               aria-checked={on}
-              onClick={() => onPick(x.id)}
+              onClick={() => { sfx.tap(); onPick(x.id); }}
               whileTap={{ scale: 0.95 }}
               animate={{ y: on ? -4 : 0 }}
               transition={snappy}
@@ -122,7 +126,7 @@ export function GuidePicker({ guide, onPick, onBack, onNext }: { guide: GuideId;
 
       <div className="flex-1" />
       <div className="px-5 pb-[max(env(safe-area-inset-bottom),24px)]">
-        <PrimaryButton onClick={onNext}>
+        <PrimaryButton onClick={() => { sfx.ona(); onNext(); }}>
           Walk with {g.name}
           <KeyCap>
             <ArrowRight size={20} weight="light" />

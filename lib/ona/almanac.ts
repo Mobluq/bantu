@@ -298,7 +298,17 @@ export const ENTRIES: Entry[] = [
 export const entryById = (id: string) => ENTRIES.find((e) => e.id === id);
 export const CATEGORIES: Category[] = ["Òrìṣà", "Igbo deity", "Founder", "Trickster", "Water spirit", "Creator"];
 
-export type Festival = { id: string; name: string; place: string; people: string; when: string; months: number[]; text: string };
+export type Festival = {
+  id: string;
+  name: string;
+  place: string;
+  people: string;
+  when: string;
+  months: number[];
+  text: string;
+  /** Moon-dated festivals: the months they are expected in over the coming year, with a note. */
+  expected?: { month: number; note: string }[];
+};
 
 /** Months are typical windows. Several festivals move with the lunar Islamic calendar or are announced locally each year. */
 export const FESTIVALS: Festival[] = [
@@ -310,9 +320,32 @@ export const FESTIVALS: Festival[] = [
   { id: "olojo", name: "Olojo Festival", place: "Ilé-Ifẹ̀", people: "Yorùbá", when: "Usually October", months: [10], text: "The Ọọ̀ni appears wearing the Arè crown; the festival honours Ògún and the first dawn." },
   { id: "igue", name: "Igue Festival", place: "Benin City", people: "Edo", when: "December", months: [12], text: "The Oba’s festival of blessing and renewal at the close of the year." },
   { id: "calabar", name: "Calabar Carnival", place: "Calabar", people: "Efik and visitors", when: "December", months: [12], text: "A month-long street carnival, held since 2004." },
-  { id: "durbar", name: "Durbar", place: "Kano, Katsina, Zaria, Bida", people: "Hausa and Nupe", when: "At Sallah (Eid), moves each year", months: [], text: "Horsemen in bright robes ride in procession to salute the emir." },
-  { id: "ojude", name: "Ojude Oba", place: "Ìjẹ̀bú-Òde", people: "Yorùbá", when: "Third day after Eid al-Adha, moves each year", months: [], text: "Age-grade groups and horsemen parade in their best to pay homage to the Awùjalẹ̀." },
+  { id: "ikeji", name: "Ikeji Festival", place: "Arondizuogu, Imo", people: "Igbo", when: "Usually March or April", months: [3, 4], text: "Days of masquerades, feasting and visiting, closing the old farming year and welcoming the new." },
+  { id: "leboku", name: "Leboku New Yam Festival", place: "Ugep, Cross River", people: "Yakurr", when: "Usually August", months: [8], text: "Ugep thanks the earth for the yam harvest with rites, dance and a parade of maidens." },
+  { id: "independence", name: "Independence Day", place: "Across Nigeria", people: "Nigeria", when: "1 October", months: [10], text: "Nigeria became independent on 1 October 1960. A national holiday of parades and green and white." },
+  {
+    id: "durbar", name: "Durbar", place: "Kano, Katsina, Zaria, Bida", people: "Hausa and Nupe", when: "At Sallah (Eid), moves each year", months: [],
+    text: "Horsemen in bright robes ride in procession to salute the emir.",
+    expected: [
+      { month: 3, note: "Small Sallah, expected around 10 Mar 2027" },
+      { month: 5, note: "Big Sallah, expected around 17 May 2027" },
+    ],
+  },
+  {
+    id: "ojude", name: "Ojude Oba", place: "Ìjẹ̀bú-Òde", people: "Yorùbá", when: "Third day after Eid al-Adha, moves each year", months: [],
+    text: "Age-grade groups and horsemen parade in their best to pay homage to the Awùjalẹ̀.",
+    expected: [{ month: 5, note: "Expected around 19 May 2027" }],
+  },
   { id: "eyo", name: "Eyo", place: "Lagos Island", people: "Yorùbá (Lagos)", when: "No fixed date", months: [], text: "Held on special occasions, often to honour a departed oba or chief. White-robed masquerades fill the island." },
 ];
 
 export const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+/** Broad seasons across Nigeria. The south's rains start earlier and end later than the north's. */
+export const SEASONS: { months: number[]; name: string; note: string }[] = [
+  { months: [12, 1, 2], name: "Harmattan", note: "Dry, dusty wind from the Sahara; cool mornings" },
+  { months: [3, 4], name: "The heat", note: "Hottest weeks; the first rains reach the south" },
+  { months: [5, 6, 7, 8, 9], name: "The rains", note: "Rainy season across the country; farms are busy" },
+  { months: [10, 11], name: "Harvest", note: "Rains ease; yams and grain come in" },
+];
+export const seasonOf = (month: number) => SEASONS.find((x) => x.months.includes(month))!;

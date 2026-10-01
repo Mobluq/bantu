@@ -131,3 +131,13 @@ Every face below was chosen because it stacks Yorùbá tone marks over underdots
 - No spinners; no "No data" empty states.
 - No caricatured deities: no cartoon faces, no comic expressions, no sexualised or demonic depictions, no imagery of closed rites (for example Orò, or the inside of Egúngún practice).
 - No names written without their tone marks and underdots.
+
+## Responsive app frame
+
+- The app frame (`.ona-root`) is an inline-size container. Display headlines use `text-[min(Npx,Xcqw)]` so they scale with the phone, not the window. Any shrink-to-fit parent of the frame must set an explicit width (`w-full`), because a size container has no intrinsic width.
+- Every screen either scrolls or flexes its hero area (map, turntable) with a minimum height, so 320×568 and landscape stay usable.
+
+## Festival calendar
+
+- Year grid (4×3 month tiles, dots coloured by people, dashed dot = moon-dated), then a labelled timeline (name column + 12-month track), then a swipeable month view with season, then moving dates.
+- One colour per people: Yorùbá brick, Igbo indigo, Hausa forest, Edo ochre, Efik gold, other clay, national ink.
