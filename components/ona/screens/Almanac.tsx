@@ -38,8 +38,8 @@ export function Almanac({ onGo }: { onGo: (s: Screen) => void }) {
     <div className="flex h-full flex-col bg-cream text-ink">
       <div className="no-scrollbar flex-1 overflow-y-auto">
         <section className="torn-bottom ht-light relative h-[300px] overflow-hidden bg-brick text-cream">
-          <motion.div initial={{ rotate: -10, opacity: 0 }} animate={{ rotate: 8, opacity: 1 }} transition={spring} className="absolute -right-14 top-[60px]">
-            <Emblem name="esu" size={290} color="var(--color-cream)" bg="var(--color-brick)" rough={3} />
+          <motion.div initial={{ rotate: -10, opacity: 0 }} animate={{ rotate: 8, opacity: 1 }} transition={spring} className="absolute -right-20 top-[92px]">
+            <Emblem name="esu" size={220} color="var(--color-cream)" bg="var(--color-brick)" rough={2.8} />
           </motion.div>
           <div className="relative flex items-center justify-between pl-1.5 pr-3.5 pt-12">
             <button type="button" onClick={() => onGo("stamps")} aria-label="Back" className="flex size-11 items-center justify-center">
@@ -49,7 +49,7 @@ export function Almanac({ onGo }: { onGo: (s: Screen) => void }) {
           </div>
           <div className="absolute bottom-8 left-5">
             <Mono className="mb-0.5 block text-[10px]">Entry</Mono>
-            <div className="t-serif text-[104px] leading-[0.8]">Nº {E.number}</div>
+            <div className="t-serif text-[80px] leading-[0.8]">Nº {E.number}</div>
           </div>
         </section>
 

@@ -1,8 +1,8 @@
 "use client";
 
 import { AnimatePresence, MotionConfig, motion } from "framer-motion";
-import { useCallback, useReducer } from "react";
-import { initialState, reducer, type Screen } from "./state";
+import { useCallback, useEffect, useReducer, useRef } from "react";
+import { initialState, reducer, type SavedState, type Screen } from "./state";
 import { Splash } from "./screens/Splash";
 import { Onboarding } from "./screens/Onboarding";
 import { GuidePicker } from "./screens/GuidePicker";
@@ -26,8 +26,42 @@ const JUMP: { id: Screen; label: string }[] = [
   { id: "me", label: "Notebook" },
 ];
 
-export function OnaApp() {
+const STORAGE_KEY = "ona.progress.v1";
+
+export function OnaApp({ bare = false }: { bare?: boolean }) {
   const [s, dispatch] = useReducer(reducer, initialState);
+  const hydrated = useRef(false);
+
+  // Restore progress once on the client. Storage can be blocked (private mode), so every access is guarded.
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      if (raw) dispatch({ type: "hydrate", saved: JSON.parse(raw) as Partial<SavedState> });
+    } catch {
+      /* start fresh */
+    }
+    hydrated.current = true;
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated.current) return;
+    const saved: SavedState = {
+      interests: s.interests,
+      guide: s.guide,
+      lives: s.lives,
+      cowries: s.cowries,
+      streak: s.streak,
+      stamps: s.stamps,
+      statuses: s.statuses,
+      onboarded: s.onboarded,
+      selectedPlace: s.selectedPlace,
+    };
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+    } catch {
+      /* progress just won't persist */
+    }
+  }, [s.interests, s.guide, s.lives, s.cowries, s.streak, s.stamps, s.statuses, s.onboarded, s.selectedPlace]);
   const go = useCallback((screen: Screen) => dispatch({ type: "go", screen }), []);
   const leaveSplash = useCallback(() => dispatch({ type: "go", screen: "onboarding" }), []);
   const clearFlash = useCallback(() => dispatch({ type: "clearStampFlash" }), []);
@@ -88,8 +122,47 @@ export function OnaApp() {
       view = <Almanac onGo={go} />;
       break;
     case "me":
-      view = <Me guide={s.guide} cowries={s.cowries} streak={s.streak} stamps={s.stamps.length} onGo={go} onReset={() => dispatch({ type: "reset" })} />;
+      view = (
+        <Me
+          guide={s.guide}
+          cowries={s.cowries}
+          streak={s.streak}
+          stamps={s.stamps.length}
+          onGo={go}
+          onReset={() => {
+            try {
+              window.localStorage.removeItem(STORAGE_KEY);
+            } catch {
+              /* nothing stored */
+            }
+            dispatch({ type: "reset" });
+          }}
+        />
+      );
       break;
+  }
+
+  const screen = (
+    <AnimatePresence mode="popLayout" initial={false}>
+      <motion.div
+        key={s.screen}
+        className="absolute inset-0"
+        initial={{ opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        transition={spring}
+      >
+        {view}
+      </motion.div>
+    </AnimatePresence>
+  );
+
+  if (bare) {
+    return (
+      <MotionConfig reducedMotion="user">
+        <div className="relative mx-auto h-[100dvh] w-full max-w-[480px] overflow-hidden bg-cream">{screen}</div>
+      </MotionConfig>
+    );
   }
 
   return (
@@ -113,18 +186,7 @@ export function OnaApp() {
 
         <div className="w-full lg:w-auto lg:rounded-[64px] lg:bg-ink/[0.05] lg:p-2 lg:shadow-[0_60px_120px_-40px_rgb(30_20_12_/_0.35),0_20px_40px_-20px_rgb(30_20_12_/_0.18)] lg:ring-1 lg:ring-ink/10">
         <div className="relative h-[100dvh] w-full overflow-hidden bg-cream lg:h-[844px] lg:w-[390px] lg:rounded-[56px] lg:border-[9px] lg:border-ink lg:shadow-[inset_0_1px_1px_rgb(255_255_255_/_0.15)]">
-          <AnimatePresence mode="popLayout" initial={false}>
-            <motion.div
-              key={s.screen}
-              className="absolute inset-0"
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={spring}
-            >
-              {view}
-            </motion.div>
-          </AnimatePresence>
+          {screen}
         </div>
         </div>
       </div>

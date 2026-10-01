@@ -15,7 +15,11 @@ export type OnaState = {
   stamps: string[];
   justStamped: string | null;
   statuses: Record<string, PlaceStatus>;
+  onboarded: boolean;
 };
+
+/** The slice of state worth keeping between visits. */
+export type SavedState = Pick<OnaState, "interests" | "guide" | "lives" | "cowries" | "streak" | "stamps" | "statuses" | "onboarded" | "selectedPlace">;
 
 export const initialState: OnaState = {
   screen: "splash",
@@ -29,6 +33,7 @@ export const initialState: OnaState = {
   stamps: ["ife", "lagos", "benin"],
   justStamped: null,
   statuses: Object.fromEntries(PLACES.map((p) => [p.id, p.status])),
+  onboarded: false,
 };
 
 export type Action =
@@ -40,12 +45,15 @@ export type Action =
   | { type: "answer"; correct: boolean }
   | { type: "completeLesson" }
   | { type: "clearStampFlash" }
+  | { type: "hydrate"; saved: Partial<SavedState> }
   | { type: "reset" };
 
 export function reducer(state: OnaState, action: Action): OnaState {
   switch (action.type) {
     case "go":
-      return { ...state, screen: action.screen };
+      return { ...state, screen: action.screen, onboarded: state.onboarded || action.screen === "map" };
+    case "hydrate":
+      return { ...state, ...action.saved, screen: action.saved.onboarded ? "map" : state.screen };
     case "toggleInterest": {
       const has = state.interests.includes(action.interest);
       return { ...state, interests: has ? state.interests.filter((i) => i !== action.interest) : [...state.interests, action.interest] };

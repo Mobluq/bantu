@@ -68,8 +68,11 @@ export default function Page() {
                 earn the Òṣogbo stamp.
               </p>
               <div className="mt-10 flex flex-wrap items-center gap-3">
-                <PillLink href="#guides">Meet the guides</PillLink>
+                <PillLink href="/app">Open the app full screen</PillLink>
               </div>
+              <p className="mt-4 max-w-[46ch] text-[13.5px] leading-relaxed text-muted">
+                On iPhone, open it in Safari, tap Share, then Add to Home Screen. On Android, Chrome offers Install app.
+              </p>
             </Reveal>
           </div>
           <div className="order-1 flex w-full items-center justify-center lg:order-2 lg:w-auto">

@@ -54,6 +54,7 @@ Every face below was chosen because it stacks Yorùbá tone marks over underdots
 - **Signature technique: inline emblems.** Small stamp-cut emblems sit inside headlines at type height, as visual punctuation between words ("Walk [Ọ̀ṣun emblem] Nigeria"). They are printed in the headline's own colour, never boxed, never photographic.
 - **Asymmetric only.** Headlines are left-aligned. On desktop the hero is a split: type on the left, the live phone or an emblem on the right. Centred heroes are banned.
 - **No overlap.** Text never sits on top of an emblem, image or other text. Large emblems may be cropped by the screen edge, but always in their own zone beside or below the type.
+- **One exception: the postmark.** A postmark is meant to land across the stamp it cancels, so it may overlap a stamp's edge. It never covers the stamp's title.
 - **One primary action.** One pill button. No secondary "learn more" link, no scroll arrows, no "scroll to explore".
 
 ## 5. Component Stylings

@@ -33,9 +33,9 @@ export function Onboarding({
           initial={{ rotate: -30, x: 60, opacity: 0 }}
           animate={{ rotate: -10, x: 0, opacity: 0.95 }}
           transition={{ ...spring, delay: 0.1 }}
-          className="absolute -right-[104px] top-[120px]"
+          className="absolute -bottom-14 -right-11"
         >
-          <Emblem name="esu" size={320} color="var(--color-cream)" bg="var(--color-brick)" rough={3} />
+          <Emblem name="esu" size={180} color="var(--color-cream)" bg="var(--color-brick)" rough={2.6} />
         </motion.div>
         <div className="relative flex justify-between px-[22px] pt-14">
           <Mono>ọ̀nà — Nº 001</Mono>

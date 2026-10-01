@@ -31,6 +31,9 @@ export const metadata: Metadata = {
   title: "ọ̀nà · a living almanac of Nigeria",
   description:
     "A map-first culture app for Nigeria, guided by the figures of its own traditions. Interactive prototype.",
+  applicationName: "ọ̀nà",
+  appleWebApp: { capable: true, title: "ọ̀nà", statusBarStyle: "black-translucent" },
+  icons: { icon: [{ url: "/icon-192.png", sizes: "192x192" }], apple: "/apple-icon.png" },
 };
 
 export const viewport: Viewport = {
