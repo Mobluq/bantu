@@ -74,6 +74,12 @@ Every face below was chosen because it stacks Yorùbá tone marks over underdots
 - **Errors.** Inline, in Brick, directly under the thing that failed, in a complete sentence that says what to do next.
 - **Icons.** Phosphor, Light weight, 20 to 24px, single colour. Filled weight only for the active tab and for play and pause glyphs.
 
+- **Die-cut sticker.** Emblems, cowries and stamps can be lifted off the page with a 2px paper outline traced around their shape and a soft tinted shadow, as if cut out and stuck down. Use for collage and celebration moments, never for interface controls.
+- **Graph paper.** Study surfaces (the Learn path, the guide chat) sit on a faint 24px ink grid, like an exercise book.
+- **Inline pills.** Hero headlines may carry one or two rounded pills at type height holding a living picture (the map, a slowly turning emblem).
+- **Film-strip loader.** The showcase opens once per session on brick red between two perforated strips, counting 0 to 100, then lifts like a curtain.
+- **Section index.** On desktop, a fixed pill at the lower left names the numbered section on screen (02 / 07 (Why)). It stays hidden over the hero.
+
 ## 6. Layout Principles
 
 - **Phone frame: 390 × 844 reference.** Content gutters of 16 to 22px. The tab bar is fixed to the bottom, 52px tall plus the safe area.
