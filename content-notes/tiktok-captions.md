@@ -53,3 +53,72 @@ One character, in every painting. Leduum shows how he drew Bosco his own way.
 
 The hardest part of being a young artist in Lagos, and why Leduum thinks this is the moment anyway. Agree?
 #lagosart #nigerianartist #lagos #artistsoftiktok
+
+## Second batch (11 November 2026)
+
+All twenty cuts now end on a 1.6-second card: "Follow Tour Studios / for more Lagos stories".
+
+### Tayo Okoya profile
+
+**tayoprofile-1-main (0:59)**
+
+The hottest third space in Lagos is two months old. Tayo Okoya on why he built Fantasy Ikoyi, and who it's for.
+#lagos #ikoyi #lagosart #thirdspace
+
+**tayoprofile-2-why-red (0:28)**
+
+Why is Fantasy Ikoyi painted red? Tayo Okoya has heard every theory. Here's the real answer.
+#ikoyi #lagos #lagosart #thingstodoinlagos
+
+### Jaiye Ogunbiyi
+
+**jaiye-1-main (0:57)**
+
+There's a working farm inside Lagos. Jaiye Ogunbiyi, pharmacist turned farmer, on Our Grandma's Farm and who it's open to.
+#lagos #urbanfarming #thingstodoinlagos #lagoslife
+
+**jaiye-2-90-percent (0:31)**
+
+Lagos imports 90% of the food it eats. Jaiye Ogunbiyi started farming to do something about it.
+#lagos #urbanfarming #foodinflation #nigeria
+
+**jaiye-3-just-leaves (0:17)**
+
+His first sweet potato harvest was all leaves. Jaiye on the lesson every new farmer learns. What did you get wrong first time?
+#urbanfarming #gardening #lagos #growyourown
+
+### Ke-Star's Guide
+
+**kestar-1-main (1:10)**
+
+Things to do in Lagos, by Ke-Star: the radio host who moved from Abuja and found the beach.
+#thingstodoinlagos #lagos #lagosbeach #lagosguide
+
+**kestar-2-beach (0:29)**
+
+Abuja has rocks. Lagos has the beach. Ke-Star on the one Lagos experience everyone should have. Tarkwa Bay or Ilashe?
+#lagosbeach #lagos #abuja #thingstodoinlagos
+
+### Icaross' Guide
+
+**icaross-1-underground (0:19)**
+
+Where Lagos' underground art scene lives. Icaross on Fantasy Ikoyi and showing what he thinks is dope.
+#lagosart #nigerianartist #ikoyi #lagos
+
+**icaross-2-mainland (0:21)**
+
+Island or Mainland? For Icaross it's Surulere, every time. Where did you grow up?
+#surulere #lagos #lagosmainland #nigerianartist
+
+### Axara
+
+**axara-1-main (1:12)**
+
+Lagos DJs to know: Axara. She plays whatever the room needs, and she knew it was for her from her first gig in uni.
+#lagosdj #lagosnightlife #femaledj #lagos
+
+**axara-2-chameleon (0:39)**
+
+A chameleon on the decks. Axara on why reading the crowd beats sticking to one genre. Agree?
+#lagosdj #djlife #lagosnightlife #femaledj
