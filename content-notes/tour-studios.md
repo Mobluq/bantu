@@ -92,6 +92,6 @@ Process on every job: Discover → Develop → Produce → Edit → Distribute.
 
 ## Open questions
 
-- Which brand is the TikTok for: Tour Studios, Tour, or something called Bantu? The repo is named `bantu`, but "Bantu" appears on the site only as Bantu Clan Season, the subject of one interview.
+- Answered 11 Nov 2026: the TikTok is for **Tour Studios**.
 - Is there an existing TikTok account, and what handle?
 - Which films have client or music-licensing limits on re-cutting?
