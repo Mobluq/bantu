@@ -110,3 +110,28 @@ The automatic transcript mishears several names (Mako, WBF, Fantasy Ikoyi, John 
 2. **Guide to Lagos has no slot.** The PDF's four formats do not include it, yet the best film is a Guide. The plan above treats it as Tour With….
 3. **Clean masters.** The published exports have subtitles, bugs and title cards burned in. Proper recuts need the clean masters or project files from the Video Editing folder.
 4. **Still to be supplied or decided (PDF section 12):** the house sans typeface file, the channel bug artwork, the TikTok handle, the sound ident.
+
+## 6. Discover Leduum (supplied 11 Nov 2026 as a Drive file)
+
+2:42, vertical 1440×2560 at 50 fps, about 41 cuts (one every 4 s, much slower than Tayo's Guide). Listed on the site as coming up, so treat it as unreleased. Subtitles, bug and end card are burned in.
+
+What it does:
+- Opens cold on a thesis line: "Creating honest work is the only way for me to truly express myself."
+- One interview frame (red check shirt, pink shorts, glass-block wall with his paintings above), cut against painting process, finished pieces and Fantasy Ikoyi.
+- Shows the work as he describes it: the signature character, then the Bosco portrait in the sketchbook.
+- Signs off in-world: "You've been on tour with me", then a "Tell your Lagos stories with Tour" end card.
+
+Proposed cuts (not cut yet):
+
+| Cut | Source | Length | Opens on |
+|---|---|---|---|
+| A. Main cut | 2:27–2:33, 0:14–0:47, 1:05–1:38, 1:38–1:48 | about 85 s | "People should be paying attention to me because I'm one of the hottest artists in the Nigerian art scene right now." |
+| B. My parents wanted banking | 0:31–0:47 | about 16 s | "My parents were suggesting I should go into finance." |
+| C. Drawing Bosco | 1:05–1:38 | about 33 s | "I have this visual identity, a signature character." |
+| D. The hardest part | 1:38–1:59 | about 21 s | "The hardest part about being a young artist in Lagos is finding visibility." |
+
+The strongest line in the film is its last one. On TikTok it should be the first.
+
+## 7. Outside footage (instruction from Folu, 11 Nov 2026)
+
+Folu said video from the internet can be used when a piece talks about a concept. This sits against two rules in the strategy PDF: "no stock footage", and business accounts being limited to licensed music. My reading, to confirm: short illustrative clips are allowed where the speaker refers to something we did not shoot, they are never the main picture, and anything used in a paid video must be cleared.
