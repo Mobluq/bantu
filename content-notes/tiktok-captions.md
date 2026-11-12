@@ -228,3 +228,25 @@ The sneakerhead red flag: creases. Lagos Sneaker Club's manager says you won't b
 
 Inside Lagos Sneaker Club. It's not a members' club, and it hosts more than shoes.
 #lagossneakers #sneakerhead #thingstodoinlagos #lagos
+
+## Posted-film cuts, new ending (12 November 2026)
+
+These fifteen replace the earlier cuts of the same moments. The edit now runs in order and ends on the film's own sign-off with the "Plan your Lagos Experience with Tour" graphic. The captions above still apply; use the one named here.
+
+| New cut | Length | Use the caption for |
+|---|---|---|
+| posted-tayo-nysc | 0:23 | hook-nysc |
+| posted-tayo-mako | 0:27 | hook-mako |
+| posted-tayo-rave | 0:29 | hook-rave |
+| posted-tayo-one-day | 0:38 | tayo-2-one-day-in-lagos |
+| posted-leduum-parents | 0:32 | leduum-2-parents |
+| posted-leduum-bosco | 0:37 | leduum-3-bosco |
+| posted-leduum-hardest | 0:34 | leduum-4-hardest-part |
+| posted-jaiye-90 | 0:33 | hook-90 |
+| posted-jaiye-leaves | 0:20 | hook-leaves |
+| posted-kestar-beach | 0:34 | hook-beach |
+| posted-kestar-radio | 0:28 | hook-radio |
+| posted-axara-country | 0:41 | hook-country |
+| posted-icaross-underground | 0:23 | hook-underground |
+| posted-icaross-mainland | 0:25 | icaross-2-mainland |
+| posted-fantasy-red | 0:33 | hook-red |
