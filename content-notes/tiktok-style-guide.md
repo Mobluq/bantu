@@ -154,3 +154,13 @@ Ones to avoid because they are creator-speak, not ours: "Stop scrolling", "I alm
 
 Structure of a hook-first cut: the punchline first (1 to 3 seconds), then the set-up, then the punchline again in context as the pay-off.
 The on-screen hook must be true to what the person says; never promise something the clip does not deliver.
+
+## 9. Feedback on the first raw-footage cuts (Folu, 12 Nov 2026)
+
+Folu's words: "the outro is too emotionless use our normal video outro and let the cuts make sense give the videos more soul".
+
+What changed in response:
+- **Outro.** No blurred "Follow Tour Studios" card. End the way the finished films do: the subject's own sign-off line ("you've just been on Tour with me") with the "Plan your Lagos Experience with Tour" graphic fading in over live footage. The graphic was recovered from Tayo's Guide; a clean file from the editor would be better.
+- **Order.** Tell the story in the order it was said. Do not open on the punchline and then replay it (my reading of "let the cuts make sense").
+- **Soul.** Cut away to b-roll of what the person is talking about, and keep the human moments (laughs, reactions) instead of trimming to the last word.
+- Still no music: no licensed track has been supplied.
