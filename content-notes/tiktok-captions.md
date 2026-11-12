@@ -122,3 +122,60 @@ Lagos DJs to know: Axara. She plays whatever the room needs, and she knew it was
 
 A chameleon on the decks. Axara on why reading the crowd beats sticking to one genre. Agree?
 #lagosdj #djlife #lagosnightlife #femaledj
+
+## Hook cuts (12 November 2026)
+
+**hook-nysc**
+
+Watch this before you do NYSC. Tayo Okoya calls it the welcome to Nigeria package. Where did they post you?
+#nysc #nyscdiaries #nigeria #lagos
+
+**hook-mako**
+
+Everyone in Lagos has one spot they're ashamed to love. Tayo just admitted his. What's yours?
+#lagos #lagosnightlife #ikoyi #thingstodoinlagos
+
+**hook-rave**
+
+This is your sign to go to a Lagos rave. Three weeks in the city is enough, Tayo Okoya says, and he names where to start.
+#lagosrave #lagosnightlife #thingstodoinlagos #lagos
+
+**hook-fantasy**
+
+Two months old and already the hottest third space in Lagos. Tayo Okoya on why he built Fantasy Ikoyi.
+#ikoyi #lagos #lagosart #thirdspace
+
+**hook-red**
+
+Why is Fantasy Ikoyi painted red? People guess danger. The real answer is better.
+#ikoyi #lagos #lagosart #thingstodoinlagos
+
+**hook-leaves**
+
+He planted sweet potatoes in Lagos and got nothing but leaves. Jaiye on the first lesson of growing your own food.
+#urbanfarming #growyourown #gardening #lagos
+
+**hook-90**
+
+Lagos imports 90% of the food it eats. Jaiye Ogunbiyi started a farm inside the city to change that.
+#lagos #urbanfarming #foodinflation #nigeria
+
+**hook-country**
+
+Ask this Lagos DJ for country music and she'll play it. Axara on reading the crowd over sticking to one sound. Agree?
+#lagosdj #lagosnightlife #femaledj #djlife
+
+**hook-radio**
+
+What hosting Lagos breakfast radio really feels like, from Ke-Star. On air 6 to 11, every morning.
+#lagosradio #radiopresenter #lagos #lagoslife
+
+**hook-underground**
+
+Lagos' underground art scene has a front door. Icaross on Fantasy Ikoyi and showing what he thinks is dope.
+#lagosart #nigerianartist #ikoyi #lagos
+
+**hook-beach**
+
+You're doing Lagos wrong if you skip the beach. Ke-Star moved from Abuja and it's still the first place she'd take you. Tarkwa Bay or Ilashe?
+#lagosbeach #thingstodoinlagos #lagos #abuja
