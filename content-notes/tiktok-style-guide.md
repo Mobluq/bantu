@@ -164,3 +164,9 @@ What changed in response:
 - **Order.** Tell the story in the order it was said. Do not open on the punchline and then replay it (my reading of "let the cuts make sense").
 - **Soul.** Cut away to b-roll of what the person is talking about, and keep the human moments (laughs, reactions) instead of trimming to the last word.
 - Still no music: no licensed track has been supplied.
+
+## 10. Look of the raw-footage cuts (Folu, 12 Nov 2026)
+
+- **Subtitles:** Poppins Bold, white, soft shadow, no outline, centred at about three-quarters down the frame, matched to the size in Discover Leduum. Folu: "use poppins font for the subtitles and make it like the edited videos". This replaces Archivo for subtitles.
+- **Grade:** Folu asked for a cinematic colour grade on all of them. Current recipe: gentle S-curve, cool shadows and warm highlights, a touch more saturation, soft vignette, light grain.
+- **Spinning icon:** Folu mentioned a spinning icon they sent. No file reached the session or the Drive folder; the corner bug is still missing from the raw cuts.
