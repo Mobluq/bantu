@@ -169,4 +169,4 @@ What changed in response:
 
 - **Subtitles:** Poppins Bold, white, soft shadow, no outline, centred at about three-quarters down the frame, matched to the size in Discover Leduum. Folu: "use poppins font for the subtitles and make it like the edited videos". This replaces Archivo for subtitles.
 - **Grade:** Folu asked for a cinematic colour grade on all of them. Current recipe: gentle S-curve, cool shadows and warm highlights, a touch more saturation, soft vignette, light grain.
-- **Spinning icon:** Folu mentioned a spinning icon they sent. No file reached the session or the Drive folder; the corner bug is still missing from the raw cuts.
+- **Spinning logo:** supplied by Folu on 12 Nov 2026 (`content-notes/brand/tour-spinning-logo.mp4`, 540×540 on black, 15-second loop). It sits top right on every video, about 70 px wide on a 1080-wide frame, centred near x 934, y 278, as in the edited films. The outro graphic recovered from Tayo's Guide is saved beside it as `tour-outro-graphic.png`.
