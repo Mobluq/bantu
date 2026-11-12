@@ -135,3 +135,22 @@ The strongest line in the film is its last one. On TikTok it should be the first
 ## 7. Outside footage (instruction from Folu, 11 Nov 2026)
 
 Folu said video from the internet can be used when a piece talks about a concept. This sits against two rules in the strategy PDF: "no stock footage", and business accounts being limited to licensed music. My reading, to confirm: short illustrative clips are allowed where the speaker refers to something we did not shoot, they are never the main picture, and anything used in a paid video must be cleared.
+
+## 8. Hooks (three examples supplied by Folu, 12 Nov 2026)
+
+The examples are hook-formula videos (Julia Broome's weekly hook schedule, and two "10 hooks that work" lists). What they teach, translated for Tour Studios, where the subject speaks and we do not:
+
+| Hook type | What it is | How we use it |
+|---|---|---|
+| Mid-sentence | Start as if the conversation is already going | Cold-open on the subject mid-thought ("…I'm not proud to say this") |
+| Bold claim | A statement people want to argue with | Open on the subject's biggest claim ("We are the new Lagos") |
+| Reverse psychology | Tell people not to do or look | On-screen line that dares ("Ask this Lagos DJ for country music") |
+| Probing question | An observation plus a real question | On-screen question the video answers ("Why is this Lagos building painted red?") |
+| Vulnerability | Something admitted | Open on the admission ("I'm always tired", "I just got leaves") |
+| Headline as hook | The typography is the hook | Larger headline held for the first 3.5 seconds |
+
+Phrase templates from the examples that fit our voice: "Watch this before you…", "This is your sign to…", "This might surprise you", "Nobody talks about…", "You're doing … wrong".
+Ones to avoid because they are creator-speak, not ours: "Stop scrolling", "I almost didn't post this", "You need to hear this".
+
+Structure of a hook-first cut: the punchline first (1 to 3 seconds), then the set-up, then the punchline again in context as the pay-off.
+The on-screen hook must be true to what the person says; never promise something the clip does not deliver.
