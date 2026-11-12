@@ -179,3 +179,52 @@ Lagos' underground art scene has a front door. Icaross on Fantasy Ikoyi and show
 
 You're doing Lagos wrong if you skip the beach. Ke-Star moved from Abuja and it's still the first place she'd take you. Tarkwa Bay or Ilashe?
 #lagosbeach #thingstodoinlagos #lagos #abuja
+
+## Cuts from the raw files (12 November 2026)
+
+Made from the Drive folder of raw footage, so the picture is clean and the subtitles are new.
+Names and places in the subtitles came from an automatic transcript and need a proofread: Lady K, Panu, Lagos Sneaker Club.
+
+### Lady K's Guide to Lagos (location tag: Panu)
+
+**ladyk-cycling (0:24)**
+
+What Lagos needs more of, according to Lady K: cycling lanes. Come on, Lagos. Agree?
+#lagos #lagoslife #cycling #lagostraffic
+
+**ladyk-romance (0:32)**
+
+Nine to five in corporate Naija, five to nine writing romance with no trauma in it. Meet Lady K.
+#romancewriter #africanromance #nigerianwriter #lagos
+
+**ladyk-nightlife (0:30)**
+
+Lagos nightlife is the one thing you can't find anywhere else. Lady K on why it isn't just music and partying.
+#lagosnightlife #lagos #thingstodoinlagos #lagoslife
+
+**ladyk-sunday (0:30)**
+
+A perfect Lagos Sunday depends on what happened Saturday night. Lady K's rule: prioritise rest. What's yours?
+#lagos #lagoslife #sundayroutine #lagosweekend
+
+**ladyk-alive (0:41)**
+
+Lagos is alive. Lady K on what she hopes everyone takes away from the city.
+#lagos #lagoslife #lagosculture #thingstodoinlagos
+
+### Lagos Sneaker Club (location tag: Lagos Sneaker Club)
+
+**sneaker-rent (0:34)**
+
+Sneakers or house rent? Every Lagos sneakerhead knows this feeling at the end of the month.
+#sneakerhead #lagossneakers #sneakers #lagos
+
+**sneaker-redflag (0:30)**
+
+The sneakerhead red flag: creases. Lagos Sneaker Club's manager says you won't be rated anywhere. Fair?
+#sneakerhead #sneakers #lagossneakers #lagos
+
+**sneaker-club (0:30)**
+
+Inside Lagos Sneaker Club. It's not a members' club, and it hosts more than shoes.
+#lagossneakers #sneakerhead #thingstodoinlagos #lagos
