@@ -170,3 +170,10 @@ What changed in response:
 - **Subtitles:** Poppins Bold, white, soft shadow, no outline, centred at about three-quarters down the frame, matched to the size in Discover Leduum. Folu: "use poppins font for the subtitles and make it like the edited videos". This replaces Archivo for subtitles.
 - **Grade:** Folu asked for a cinematic colour grade on all of them. Current recipe: gentle S-curve, cool shadows and warm highlights, a touch more saturation, soft vignette, light grain.
 - **Spinning logo:** supplied by Folu on 12 Nov 2026 (`content-notes/brand/tour-spinning-logo.mp4`, 540×540 on black, 15-second loop). It sits top right on every video, about 70 px wide on a 1080-wide frame, centred near x 934, y 278, as in the edited films. The outro graphic recovered from Tayo's Guide is saved beside it as `tour-outro-graphic.png`.
+
+## 11. Grade and showreel (Folu, 18 Nov 2026)
+
+- **Grade:** Folu asked for every video to be graded "to better wes anderson style" and to look "shot on a cinema grade camera". The recipe now lives in the repo as a skill: `.claude/skills/tour-colour-grade/`. It holds the LUT, the halation, diffusion and grain chain, and the iPhone HDR conversion. It replaces the curves recipe in §10.
+- **iPhone HDR:** every iPhone raw clip in the Drive is HDR (HLG, BT.2020). Before 18 November it was rendered without tone mapping, which made it flat and slightly green. It now goes through the HDR conversion first.
+- **Showreel:** Folu's reference was a Reiss International Women's Day TikTok: four founders on one set, cut every 0.8 to 1.5 seconds through hello, name and role, ending on a plain end card. The Tour version applies that rhythm to the sign-offs: greetings, a Lagos day-to-night montage, then "…and you've been on Tour with me" across eight people, ending on a cream "You've been on Tour." card.
+- **Burned-in subtitles:** finished films carry their own subtitles. When re-using their shots, crop above the subtitle band (about the top 70 to 80% of the frame) and set our own Poppins subtitles, so the reel reads as one piece.
